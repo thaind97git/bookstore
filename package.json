@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "babel-node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production babel-node server.js"
+    "start": "NODE_ENV=production babel-node server.js",
+    "heroku-postbuild": "npm run build"
   },
   "prettier": {
     "quotes": true,
