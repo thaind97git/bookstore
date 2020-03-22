@@ -17,7 +17,7 @@ export const loginAdminAPI = makeFetchAction(
     })({ username, password })
 );
 
-export const loginAmin = ({ username, password }) => {
+export const loginAdmin = ({ username, password }) => {
   return respondToSuccess(
     loginAdminAPI.actionCreator({
       username,

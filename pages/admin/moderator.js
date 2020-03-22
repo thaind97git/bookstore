@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import React from 'react';
 import PageLayout from '../../layouts/PageLayout';
-import UserManagementComponent from '../../components/UserManagementComponent';
+import ModeratorManagementComponent from '../../components/ModeratorManagementComponent';
 import AuthenHOC from '../../components/HOC/AuthenHOC';
 
 const HomePage = () => (
@@ -9,7 +9,7 @@ const HomePage = () => (
     <Head>
       <title key="title">Moderator Management</title>
     </Head>
-    <UserManagementComponent />
+    <ModeratorManagementComponent />
   </PageLayout>
 );
 export default AuthenHOC(HomePage);

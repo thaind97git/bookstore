@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Grid } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import TablePaginationComponent from '../components/commons/TablePaginationComponent';
 import CardSimpleLayout from '../layouts/CardSimpleLayout';
+import { GetAllUSerAPI, getAllUSer } from '../stores/ModeratorState';
+import { MODERATOR } from '../enums/userType';
+
+const connectToRedux = connect(
+  createStructuredSelector({
+    allUserData: GetAllUSerAPI.dataSelector
+  }),
+  dispatch => ({
+    getAllUSer: ({ pageSize, pageIndex }) =>
+      dispatch(getAllUSer({ pageIndex, pageSize }))
+  })
+);
 
 const HEADERS = [
   {
@@ -84,7 +99,26 @@ const DATA = [
   }
 ];
 
-export const ModeratorManagementComponent = () => {
+export const ModeratorManagementComponent = ({ getAllUSer, allUserData }) => {
+  const [isFetch, setIsFetch] = useState(true);
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(1);
+
+  useEffect(() => {
+    if (isFetch) {
+      getAllUSer({ pageIndex, pageSize });
+      setIsFetch(false);
+    }
+  }, [isFetch, getAllUSer, pageSize, pageIndex]);
+
+  useEffect(() => {
+    setIsFetch(true);
+  }, [pageIndex, pageSize]);
+  if (!allUserData) {
+    return <Grid />;
+  }
+  const moderatorData =
+    allUserData.filter(user => user.role === MODERATOR) || [];
   return (
     <CardSimpleLayout
       header="User Management"
@@ -92,13 +126,14 @@ export const ModeratorManagementComponent = () => {
         <TablePaginationComponent
           headers={HEADERS}
           onChangePageSize={(pageIndex, pageSize) => {
-            console.log({ pageIndex, pageSize });
+            setPageSize(pageSize);
+            setPageIndex(pageIndex);
           }}
-          rows={DATA}
+          rows={moderatorData}
           striped
         />
       }
     />
   );
 };
-export default ModeratorManagementComponent;
+export default connectToRedux(ModeratorManagementComponent);
