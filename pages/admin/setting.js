@@ -1,15 +1,15 @@
 import React from 'react';
 import Head from 'next/head';
 import PageLayout from '../../layouts/PageLayout';
-import SettingsComponent from '../../components/SettingsComponent';
+import SettingComponent from '../../components/SettingComponent';
 import AuthenHOC from '../../components/HOC/AuthenHOC';
 
 const SettingsPage = () => (
   <PageLayout title="Settings">
     <Head>
-      <title key="title">Club21 Compound</title>
+      <title key="title">Settings</title>
     </Head>
-    <SettingsComponent />
+    <SettingComponent />
   </PageLayout>
 );
 

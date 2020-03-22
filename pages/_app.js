@@ -8,6 +8,7 @@ import { SnackbarProvider } from 'notistack';
 import Notifier from '../stores/Notifier';
 import { Close } from '@material-ui/icons';
 import 'swiper/css/swiper.css';
+import './nprogess.css';
 
 const enhance = compose(withRedux(makeStore));
 const notistackRef = React.createRef();

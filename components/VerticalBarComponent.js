@@ -97,27 +97,27 @@ const VerticalBarComponent = ({ open, setOpen, router, width }) => {
     {
       label: 'Home',
       icon: <DesktopMac />,
-      link: ''
+      link: '/admin'
     },
     {
       label: 'Moderator',
       icon: <GraphicEq />,
-      link: '/moderator'
+      link: '/admin/moderator'
     },
     {
       label: 'User',
       icon: <SignalCellularAlt />,
-      link: '/user'
+      link: '/admin/user'
     },
     {
       label: 'Book',
       icon: <Group />,
-      link: '/book'
+      link: '/admin/book'
     },
     {
       label: 'Setting',
       icon: <Person />,
-      link: '/setting'
+      link: '/admin/setting'
     }
   ];
 

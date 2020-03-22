@@ -5,7 +5,6 @@ import {
   Badge,
   Toolbar,
   Typography,
-  makeStyles,
   AppBar,
   withStyles
 } from '@material-ui/core';
@@ -13,6 +12,7 @@ import { MenuBook, Home, ShoppingCart } from '@material-ui/icons';
 import CopyrightComponent from '../components/CopyrightComponent';
 import { withRouter } from 'next/router';
 import { compose } from 'recompose';
+import clsx from 'clsx';
 
 const styles = theme => ({
   menu: {
@@ -26,12 +26,16 @@ const styles = theme => ({
       background: '#ececec'
     }
   },
+  menuActive: {
+    color: '#3f51b5'
+  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6)
   }
 });
 const enhance = compose(withStyles(styles), withRouter);
+
 class EmptyPageLayout extends React.Component {
   constructor(props) {
     super(props);
@@ -39,8 +43,33 @@ class EmptyPageLayout extends React.Component {
       menuSelected: ''
     };
   }
+
+  MENU_CLIENT = [
+    {
+      link: '/',
+      label: 'Home',
+      icon: <Home />
+    },
+    {
+      link: '/details',
+      label: 'Categories',
+      icon: <MenuBook />
+    },
+    {
+      link: '/shoping-card',
+      label: 'Home',
+      icon: (
+        <Badge badgeContent={4} color="secondary">
+          <ShoppingCart />
+        </Badge>
+      )
+    }
+  ];
   onChangeMenuSelected = (event, value) =>
     this.setState({ ...this.state, menuSelected: value });
+
+  componentDidMount() {}
+
   render() {
     const { value } = this.state;
     const { classes, children, router } = this.props;
@@ -63,6 +92,18 @@ class EmptyPageLayout extends React.Component {
               onChange={this.onChangeMenuSelected}
               className={classes.menu}
             >
+              {this.MENU_CLIENT.map((item, key) => (
+                <BottomNavigationAction
+                  key={key}
+                  href={item.link}
+                  className={clsx(
+                    classes.menuAction,
+                    router.pathname === item.link && classes.menuActive
+                  )}
+                  label={item.label}
+                  icon={item.icon}
+                />
+              ))}
               <BottomNavigationAction
                 href="/"
                 className={classes.menuAction}
@@ -70,31 +111,10 @@ class EmptyPageLayout extends React.Component {
                 value=""
                 icon={<Home />}
               />
-
-              <BottomNavigationAction
-                href="/details?id=123"
-                className={classes.menuAction}
-                label="Categories"
-                value="category"
-                icon={<MenuBook />}
-              />
-
-              <BottomNavigationAction
-                href="/shoping-card"
-                className={classes.menuAction}
-                label="Your Card"
-                value="shoping-card"
-                icon={
-                  <Badge badgeContent={4} color="secondary">
-                    <ShoppingCart />
-                  </Badge>
-                }
-              />
             </BottomNavigation>
           </Toolbar>
         </AppBar>
         <main style={{ paddingTop: 64 }}>{children}</main>
-        {/* Footer */}
         <footer className={classes.footer}>
           <Typography variant="h6" align="center" gutterBottom>
             Footer

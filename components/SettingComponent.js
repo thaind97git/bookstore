@@ -1,5 +1,5 @@
 import React from 'react';
-import CardSimpleLayout from './CardSimpleLayout';
+import CardSimpleLayout from '../layouts/CardSimpleLayout';
 import { Grid, TextField, Button, makeStyles } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   root: {

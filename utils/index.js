@@ -14,8 +14,15 @@ export const doFunctionWithEnter = (event, func) =>
   event.key === 'Enter' &&
   typeof func === 'function' &&
   func();
-  
+
 export const parseBoolean = val =>
   !val || val === 'false' || val === 'null' || val === 'undefined'
     ? false
     : true;
+
+export const getObjectValuesFormWithEvent = (arrName = [], event) => {
+  return arrName.reduce((object, name) => {
+    object[name] = get(`target.${name}.value`)(event);
+    return object;
+  }, {});
+};

@@ -1,6 +1,6 @@
 import { merge, get } from 'lodash/fp';
 import { ACTIONS } from 'redux-api-call';
-import { LOGIN_USER } from './userState';
+import { LOGIN_ADMIN } from './UserState';
 import { DEFAULT_OPTION_TOAST } from '../utils/options';
 import {
   TOAST_ERROR,
@@ -47,7 +47,7 @@ export default {
     let msgNotify = '';
     if (type === ACTIONS.COMPLETE && !hasErrors(payload)) {
       switch (name) {
-        case LOGIN_USER:
+        case LOGIN_ADMIN:
           msgNotify = 'Login success';
           break;
         default:
@@ -66,7 +66,7 @@ export default {
       (type === ACTIONS.COMPLETE && hasErrors(payload))
     ) {
       switch (name) {
-        case LOGIN_USER:
+        case LOGIN_ADMIN:
           msgNotify = 'Login fail';
           break;
 

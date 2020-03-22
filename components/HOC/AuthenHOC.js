@@ -7,7 +7,7 @@ import {
   getCurrentUserAPI,
   getCurrentUser,
   verifyLogin
-} from '../../stores/userState';
+} from '../../stores/UserState';
 
 const connectWithRedux = connect(
   createStructuredSelector({
