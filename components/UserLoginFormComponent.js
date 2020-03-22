@@ -1,33 +1,25 @@
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Box from '@material-ui/core/Box';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  Box,
+  Typography,
+  Container
+} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import { getObjectValuesFormWithEvent } from '../utils';
+import CopyrightComponent from './CopyrightComponent';
+import { loginAmin } from '../stores/UserState';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link
-        target="__blank"
-        color="inherit"
-        href="https://dev-blogs.netlify.com/"
-      >
-        Thaind97
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const connectToRedux = connect(null, dispatch => ({
+  loginAdmin: (username, password) => dispatch(loginAmin(username, password))
+}));
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -49,8 +41,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignIn() {
+function AdminLoginComponent({ loginAdmin }) {
   const classes = useStyles();
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSubmit = event => {
+    event.preventDefault();
+    loginAdmin(getObjectValuesFormWithEvent(['username', 'password'], event));
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -62,17 +62,18 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            label="Username"
+            name="username"
             autoFocus
+            value={username}
+            onChange={event => setUsername(event.target.value)}
           />
           <TextField
             variant="outlined"
@@ -83,7 +84,9 @@ export default function SignIn() {
             label="Password"
             type="password"
             id="password"
-            autoComplete="current-password"
+            autoComplete="new-password"
+            value={password}
+            onChange={event => setPassword(event.target.value)}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -101,8 +104,12 @@ export default function SignIn() {
         </form>
       </div>
       <Box mt={8}>
-        <Copyright />
+        <CopyrightComponent link="https://dev-blogs.netlify.com/">
+          Thaind97
+        </CopyrightComponent>
       </Box>
     </Container>
   );
 }
+
+export default connectToRedux(AdminLoginComponent);

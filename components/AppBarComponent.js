@@ -14,7 +14,7 @@ import {
 import { AccountCircle } from '@material-ui/icons';
 import { compose } from 'redux';
 
-import { logOut } from '../stores/userState';
+import { logOut } from '../stores/UserState';
 
 const connectToRedux = connect(null, dispatch => ({}));
 

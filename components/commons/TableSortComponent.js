@@ -86,7 +86,7 @@ const EnhancedTableHead = props => {
   );
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     width: '100%'
   },

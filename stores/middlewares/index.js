@@ -1,4 +1,4 @@
-// import nprogressMiddleware from './nprogressMiddleware';
+import nprogressMiddleware from './nprogressMiddleware';
 import reduxThunk from 'redux-thunk';
 import { middleware as apiMiddleware } from 'redux-api-call';
 import { middleware as apiReactionMiddleware } from './api-reaction';
@@ -16,7 +16,7 @@ const logger = () => next => action => {
 export default [
   logger,
   reduxThunk,
-  // nprogressMiddleware,
+  nprogressMiddleware,
   apiMiddleware,
   apiReactionMiddleware
 ];

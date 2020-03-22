@@ -1,3 +1,4 @@
+import { ACTIONS } from 'redux-api-call';
 import NProgress from 'nprogress';
 import Router from 'next/router';
 
@@ -31,11 +32,13 @@ const nprogressMiddleware = () => {
 
   return next => action => {
     if (!isServer) {
-      Router.events.on('routeChangeStart', () => {
+      if (action.type === ACTIONS.START) {
         startProgress();
-      })
-      Router.events.on('routeChangeComplete', () => stopProgress())
-      Router.events.on('routeChangeError', () => stopProgress())
+      }
+
+      if (action.type === ACTIONS.COMPLETE || action.type === ACTIONS.FAILURE) {
+        stopProgress();
+      }
     }
 
     return next(action);
