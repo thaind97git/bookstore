@@ -15,10 +15,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import { getObjectValuesFormWithEvent } from '../utils';
 import CopyrightComponent from './CopyrightComponent';
-import { loginAmin } from '../stores/UserState';
+import { loginAdmin } from '../stores/UserState';
 
 const connectToRedux = connect(null, dispatch => ({
-  loginAdmin: (username, password) => dispatch(loginAmin(username, password))
+  loginAdmin: (username, password) => dispatch(loginAdmin(username, password))
 }));
 
 const useStyles = makeStyles(theme => ({

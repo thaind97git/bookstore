@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import React from 'react';
-import UserLoginFormComponent from '../../components/UserLoginFormComponent';
+import AdminLoginFormComponent from '../../components/AdminLoginFormComponent';
 import EmptyPageLayout from '../../layouts/EmptyPageLayout';
 
 const LoginPage = () => (
@@ -8,7 +8,7 @@ const LoginPage = () => (
     <Head>
       <title key="title">Login Page</title>
     </Head>
-    <UserLoginFormComponent />
+    <AdminLoginFormComponent />
   </EmptyPageLayout>
 );
 

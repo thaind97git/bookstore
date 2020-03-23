@@ -7,7 +7,7 @@ export default (options = {}) =>
   Object.assign(
     {},
     {
-      Authorization: getToken(),
+      Authorization: `bearer ${getToken()}`,
       'Content-Type': 'application/json'
     },
     formatObj(options)

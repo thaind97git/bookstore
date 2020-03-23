@@ -13,7 +13,7 @@ require('dotenv').config({
   path: envFilePath
 });
 
-const port = parseInt(process.env.NODE_PORT, 10) || 3000;
+const port = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -25,7 +25,7 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  server.listen(port, err => {
+  server.listen(port, '0.0.0.0', err => {
     if (err) throw err;
     console.log('environment: ', environment);
     console.log(`> Ready on http://localhost:${port}`);
