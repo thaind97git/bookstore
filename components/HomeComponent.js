@@ -1,30 +1,24 @@
 import React from 'react';
 import {
-  IconButton,
-  CardHeader,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
   Grid,
   Typography,
   makeStyles,
-  Container,
-  Tooltip
+  Container
 } from '@material-ui/core';
-import { Share, AddShoppingCart, NavigateNext } from '@material-ui/icons';
 import Swiper from 'react-id-swiper';
-import Link from 'next/link';
+import { connect } from 'react-redux';
+import { ADD_TO_CARD } from '../stores/CardState';
+import CardBookComponent from './CardBookComponent';
+import PaginationComponent from './PaginationComponent';
+
+const connectToRedux = connect(null, dispatch => ({
+  addToCard: card => dispatch({ type: ADD_TO_CARD, payload: card })
+}));
 
 const useStyles = makeStyles(theme => ({
   root: {
     maxWidth: 345
-  },
-  media: {
-    height: 0,
-    paddingTop: '100%' // 16:9
-    // width:
   },
   menu: {
     width: 500,
@@ -50,24 +44,61 @@ const useStyles = makeStyles(theme => ({
   cardGrid: {
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8)
-  },
-  card: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  cardContent: {
-    flexGrow: 1
-  },
-  footer: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6)
   }
 }));
 
-const cards = [1, 2, 3];
+const BOOKS = [
+  {
+    id: 0,
+    name: 'Nerver eat alone',
+    description:
+      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
+    coverPicture: '/static/images/book1.png',
+    price: 10000
+  },
+  {
+    id: 1,
+    name: 'Nerver eat alone 1',
+    description:
+      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
+    coverPicture: '/static/images/book1.png',
+    price: 10000
+  },
+  {
+    id: 2,
+    name: 'Nerver eat alone 2',
+    description:
+      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
+    coverPicture: '/static/images/book1.png',
+    price: 10000
+  },
+  {
+    id: 3,
+    name: 'Nerver eat alone 3',
+    description:
+      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
+    coverPicture: '/static/images/book1.png',
+    price: 10000
+  },
+  {
+    id: 4,
+    name: 'Nerver eat alone 4',
+    description:
+      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
+    coverPicture: '/static/images/book1.png',
+    price: 10000
+  },
+  {
+    id: 5,
+    name: 'Nerver eat alone 5',
+    description:
+      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
+    coverPicture: '/static/images/book1.png',
+    price: 10000
+  }
+];
 
-export default function HomeComponent() {
+function HomeComponent({ bookData = BOOKS, addToCard }) {
   const params = {
     spaceBetween: 30,
     centeredSlides: true,
@@ -152,70 +183,19 @@ export default function HomeComponent() {
         </Container>
       </div>
       <Container className={classes.cardGrid} maxWidth="md">
-        {/* End hero unit */}
         <Grid container spacing={4}>
-          {cards.map(card => (
-            <Grid item key={card} xs={12} sm={6} md={4}>
-              <Card className={classes.root}>
-                <CardHeader
-                  // avatar={
-                  //   <Avatar aria-label="recipe" className={classes.avatar}>
-                  //     R
-                  //   </Avatar>
-                  // }
-                  action={
-                    <Tooltip title="View more" aria-label="add">
-                      <Link href="/details?id=abc">
-                        <IconButton aria-label="settings">
-                          <NavigateNext />
-                        </IconButton>
-                      </Link>
-                    </Tooltip>
-                  }
-                  title={<small>Never eat alone</small>}
-                  subheader="Keith ferrazzi"
-                />
-                <CardMedia
-                  className={classes.media}
-                  image="/static/images/book1.png"
-                  title="Paella dish"
-                />
-                <CardContent>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    This impressive paella is a perfect party dish and a fun
-                    meal to cook together with your guests. Add 1 cup of frozen
-                    peas along with the mussels, if you like.
-                  </Typography>
-                </CardContent>
-                <CardActions disableSpacing>
-                  <Tooltip title="Add to card" aria-label="add">
-                    <IconButton aria-label="add to favorites">
-                      <AddShoppingCart />
-                    </IconButton>
-                  </Tooltip>
-                  <IconButton aria-label="share">
-                    <Share />
-                  </IconButton>
-                  {/* <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </IconButton> */}
-                </CardActions>
-              </Card>
+          {bookData.map((book, index) => (
+            <Grid item key={index} xs={12} sm={6} md={4}>
+              <CardBookComponent addToCard={addToCard} book={book} />
             </Grid>
           ))}
+        </Grid>
+        <Grid style={{ marginTop: 24 }} container justify="center">
+          <PaginationComponent totalCount={bookData.length} />
         </Grid>
       </Container>
     </React.Fragment>
   );
 }
+
+export default connectToRedux(HomeComponent);

@@ -2,20 +2,21 @@ import { makeFetchAction } from 'redux-api-call';
 import nfetch from '../libs/nfetch';
 import { respondToSuccess } from './middlewares/api-reaction';
 
-export const GET_ALL_USER = 'GET_ALL_USER';
+export const GET_ALL_MODERATOR = 'GET_ALL_USGET_ALL_MODERATORER';
 
-export const GetAllUSerAPI = makeFetchAction(
-  GET_ALL_USER,
+export const GetAllModeratorAPI = makeFetchAction(
+  GET_ALL_MODERATOR,
   ({ pageSize, pageIndex }) =>
     nfetch({
       method: 'GET',
-      endpoint: `/user?pageNumber=${pageIndex}&pageSize=${pageSize}&sortDirection=asc&sortField=id`
+      endpoint: `/user/moderator?pageNumber=${pageIndex}&pageSize=${pageSize}&sortDirection=asc&sortField=id`
     })()
 );
 
-export const getAllUSer = ({ pageSize, pageIndex }) =>
+export const getAllModerator = ({ pageSize, pageIndex }) =>
   respondToSuccess(
-    GetAllUSerAPI.actionCreator({ pageIndex, pageSize }, () => {
+    GetAllModeratorAPI.actionCreator({ pageIndex, pageSize }),
+    () => {
       return;
-    })
+    }
   );

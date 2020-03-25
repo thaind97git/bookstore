@@ -118,7 +118,8 @@ export default function TablePaginationComponent({
   bodyProps = {},
   rows = [],
   striped,
-  onChangePageSize
+  onChangePageSize,
+  totalCount
 }) {
   const classes = useStyles2();
   const [pageIndex, setPageIndex] = React.useState(0);
@@ -161,20 +162,20 @@ export default function TablePaginationComponent({
               })}
             </TableRow>
           ))}
+          {!rows.length && (
+            <TableRow style={{ height: 256 }}>
+              <TableCell className={classes.emptyData}>
+                <span>No data...</span>
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
-        {!rows.length && (
-          <TableRow style={{ height: 256 }}>
-            <TableCell className={classes.emptyData}>
-              <span>No data...</span>
-            </TableCell>
-          </TableRow>
-        )}
         <TableFooter>
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
               colSpan={12}
-              count={rows.length}
+              count={totalCount || rows.length}
               rowsPerPage={pageSize}
               page={pageIndex}
               SelectProps={{
@@ -182,14 +183,14 @@ export default function TablePaginationComponent({
                 native: true
               }}
               onChangePage={(event, newPage) => {
-                setPageIndex(newPage);
-                onChangePageSize(newPage, pageSize);
+                setPageIndex(newPage + 1);
+                onChangePageSize(newPage + 1, pageSize);
               }}
               onChangeRowsPerPage={event => {
                 const newPageSize = parseInt(event.target.value, 10);
                 setPageSize(newPageSize);
-                setPageIndex(0);
-                onChangePageSize(0, newPageSize);
+                setPageIndex(1);
+                onChangePageSize(1, newPageSize);
               }}
               ActionsComponent={TablePaginationActions}
             />

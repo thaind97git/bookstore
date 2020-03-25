@@ -1,6 +1,8 @@
 import { merge, get } from 'lodash/fp';
 import { ACTIONS } from 'redux-api-call';
-import { LOGIN_ADMIN } from './UserState';
+import { LOGIN_ADMIN, DELETE_USER } from './UserState';
+import { ADD_TO_CARD, REMOVE_ITEM } from './CardState';
+import { SAVE_BOOK, DELETE_BOOK } from './BookState';
 import { DEFAULT_OPTION_TOAST } from '../utils/options';
 import {
   TOAST_ERROR,
@@ -50,6 +52,21 @@ export default {
         case LOGIN_ADMIN:
           msgNotify = 'Login success';
           break;
+        case DELETE_USER:
+          msgNotify = 'Delete Success';
+          break;
+        case ADD_TO_CARD:
+          msgNotify = 'Add to card success';
+          break;
+        case REMOVE_ITEM:
+          msgNotify = 'Remove item from card success';
+          break;
+        case SAVE_BOOK:
+          msgNotify = 'Save book success';
+          break;
+        case DELETE_BOOK:
+          msgNotify = 'Delete success';
+          break;
         default:
           break;
       }
@@ -69,7 +86,21 @@ export default {
         case LOGIN_ADMIN:
           msgNotify = 'Login fail';
           break;
-
+        case DELETE_USER:
+          msgNotify = 'Delete Fail';
+          break;
+        case ADD_TO_CARD:
+          msgNotify = 'Add to card fail';
+          break;
+        case REMOVE_ITEM:
+          msgNotify = 'Remove item from card fail';
+          break;
+        case SAVE_BOOK:
+          msgNotify = 'Save book fail';
+          break;
+        case DELETE_BOOK:
+          msgNotify = 'Delete fail';
+          break;
         default:
           break;
       }

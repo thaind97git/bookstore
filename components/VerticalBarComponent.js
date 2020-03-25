@@ -22,10 +22,20 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { compose } from 'redux';
 import { withRouter } from 'next/router';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { GetCurrentUserAPI } from '../stores/UserState';
+import { MODERATOR, ADMIN } from '../enums/userType';
+
+const connectToRedux = connect(
+  createStructuredSelector({
+    currentUserData: GetCurrentUserAPI.dataSelector
+  })
+);
 
 const drawerWidth = 240;
 
-const enhance = compose(withRouter, withWidth());
+const enhance = compose(withRouter, withWidth(), connectToRedux);
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -81,7 +91,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const VerticalBarComponent = ({ open, setOpen, router, width }) => {
+const VerticalBarComponent = ({
+  open,
+  setOpen,
+  router,
+  width,
+  currentUserData
+}) => {
+  const { role = MODERATOR } = currentUserData || {};
   const handleDrawerResponsive = size => {
     if (!['md', 'lg', 'xl'].includes(size)) {
       setOpen(false);
@@ -100,11 +117,6 @@ const VerticalBarComponent = ({ open, setOpen, router, width }) => {
       link: '/admin'
     },
     {
-      label: 'Moderator',
-      icon: <GraphicEq />,
-      link: '/admin/moderator'
-    },
-    {
       label: 'User',
       icon: <SignalCellularAlt />,
       link: '/admin/user'
@@ -115,11 +127,24 @@ const VerticalBarComponent = ({ open, setOpen, router, width }) => {
       link: '/admin/book'
     },
     {
+      label: 'Category',
+      icon: <Group />,
+      link: '/admin/category'
+    },
+    {
       label: 'Setting',
       icon: <Person />,
       link: '/admin/setting'
     }
   ];
+
+  if (role === ADMIN) {
+    MENU_DATA.splice(1, 0, {
+      label: 'Moderator',
+      icon: <GraphicEq />,
+      link: '/admin/moderator'
+    });
+  }
 
   const classes = useStyles();
   return (

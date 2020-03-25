@@ -5,39 +5,39 @@ import RoleComponent from './RoleComponent';
 import StatusComponent from './StatusComponent';
 import { Button, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
-import {
-  GetAllUserAPI,
-  getAllUser,
-  DeleteUserAPI,
-  deleteUser
-} from '../stores/UserState';
 import { createStructuredSelector } from 'reselect';
 import DialogComponent from './commons/DialogComponent';
+import {
+  GetBooksAPI,
+  getBooks,
+  DeleteBookAPI,
+  deleteBook
+} from '../stores/BookState';
 
 const connectToRedux = connect(
   createStructuredSelector({
-    userData: GetAllUserAPI.dataSelector,
-    deleteUserData: DeleteUserAPI.dataSelector
+    bookData: GetBooksAPI.dataSelector,
+    deleteBookData: DeleteBookAPI.dataSelector
   }),
   dispatch => ({
-    getAllUser: ({ pageSize, pageIndex }) =>
-      dispatch(getAllUser({ pageIndex, pageSize })),
-    deleteUser: id => dispatch(deleteUser(id))
+    getBooks: ({ pageSize, pageIndex }) =>
+      dispatch(getBooks({ pageIndex, pageSize })),
+    deleteBook: id => dispatch(deleteBook(id))
   })
 );
 
 const HEADERS = [
   {
-    header: 'Full Name',
-    key: 'fullName'
+    header: 'Name',
+    key: 'name'
   },
   {
-    header: 'Username',
-    key: 'username'
+    header: 'Image',
+    key: 'image'
   },
   {
-    header: 'Role',
-    key: 'role'
+    header: 'Categories',
+    key: 'categories'
   },
   {
     header: 'Status',
@@ -70,10 +70,11 @@ const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
     )
   }));
 
-export const UserManagementComponent = ({
-  getAllUser,
-  userData,
-  deleteUserData
+export const BookManagementComponent = ({
+  getBooks,
+  bookData,
+  deleteBook,
+  deleteBookData
 }) => {
   const [isFetch, setIsFetch] = useState(true);
   const [pageSize, setPageSize] = useState(5);
@@ -83,20 +84,20 @@ export const UserManagementComponent = ({
 
   useEffect(() => {
     if (isFetch) {
-      getAllUser({ pageIndex, pageSize });
+      // getBooks({ pageIndex, pageSize });
       setIsFetch(false);
     }
-  }, [isFetch, getAllUser, pageSize, pageIndex]);
+  }, [isFetch, getBooks, pageSize, pageIndex]);
 
   useEffect(() => {
     setIsFetch(true);
   }, [pageIndex, pageSize]);
 
-  if (!userData) {
+  if (!bookData) {
     return <Grid />;
   }
 
-  const { content = [], totalElements } = userData;
+  const { content = [], totalElements } = bookData;
   return (
     <Fragment>
       <DialogComponent
@@ -108,13 +109,13 @@ export const UserManagementComponent = ({
           setDialogDelete(false);
         }}
         onOk={() => {
-          deleteUser(idDeleted);
-          deleteUserData && setIsFetch(true);
+          deleteBook(idDeleted);
+          deleteBookData && setIsFetch(true);
           setDialogDelete(false);
         }}
       />
       <CardSimpleLayout
-        header="User Management"
+        header="Book Management"
         body={
           <TablePaginationComponent
             totalCount={totalElements}
@@ -135,4 +136,4 @@ export const UserManagementComponent = ({
     </Fragment>
   );
 };
-export default connectToRedux(UserManagementComponent);
+export default connectToRedux(BookManagementComponent);

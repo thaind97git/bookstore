@@ -47,6 +47,14 @@ class MyDocument extends Document {
             href="/static/assets/css/custom.css"
           />
           <link rel="manifest" href="/static/manifest.json" />
+          <link
+            rel="stylesheet"
+            href="/static/assets/css/material-table-icon.css"
+          ></link>
+          <link
+            rel="stylesheet"
+            href="/static/assets/css/pagination.css"
+          ></link>
         </Head>
         <body>
           <Main />

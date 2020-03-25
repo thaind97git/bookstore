@@ -3,9 +3,11 @@ import { reducers as apiReducers } from 'redux-api-call';
 
 import toastState from './ToastState';
 import navigateState from './NavigateState';
+import cardState from './CardState';
 
 export default combineReducers({
   ...apiReducers,
   ...toastState,
-  ...navigateState
+  ...navigateState,
+  ...cardState
 });
