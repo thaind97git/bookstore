@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -15,6 +15,7 @@ import { pick } from 'lodash/fp';
 import { connect } from 'react-redux';
 import { REMOVE_ITEM } from '../stores/CardState';
 import { formatDisplayNumber } from '../utils';
+import RLink from '../layouts/RLink';
 
 const connectToRedux = connect(pick(['shopingCard']), dispatch => ({
   removeItem: id => dispatch({ type: REMOVE_ITEM, payload: id })
@@ -27,7 +28,12 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem }) => {
       }, 0)
     : 0;
   const [basketData, setBasketData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showPaymentButton, setShowPaymentButton] = useState(true);
+
+  useEffect(() => {
+    !!shopingCard.length && setIsLoading(false);
+  }, [shopingCard]);
   return (
     <Container style={{ minHeight: '80vh', marginTop: 30 }}>
       <Card elevation={0}>
@@ -36,7 +42,7 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem }) => {
             components={{
               Container: props => <Paper {...props} elevation={0} />
             }}
-            // isLoading={this.props.basketData.isLoading}
+            isLoading={isLoading}
             title="Shopping Cart"
             data={shopingCard || []}
             actions={[
@@ -59,7 +65,7 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem }) => {
             columns={[
               { title: 'Product', field: 'name' },
               { title: 'Quantity', field: 'quantity', type: 'numeric' },
-              { title: 'Price', field: 'price', type: 'numeric' }
+              { title: 'Price', field: 'price', type: 'currency' }
             ]}
             options={{
               actionsColumnIndex: -1,
@@ -86,13 +92,24 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem }) => {
             <Typography variant="h4" style={{ margin: '20px 10px 20px 0px' }}>
               Total: $ {formatDisplayNumber(totalPrice)}
             </Typography>
-            <Button
-              variant="outlined"
-              color="primary"
-              style={{ textTransform: 'none' }}
-            >
-              Payment
-            </Button>
+            <RLink href="/order">
+              <Button
+                variant="outlined"
+                color="primary"
+                style={{ textTransform: 'none' }}
+              >
+                Payment
+              </Button>
+            </RLink>
+            <RLink href="/">
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ textTransform: 'none' }}
+              >
+                Buy More
+              </Button>
+            </RLink>
           </CardActions>
         )}
       </Card>

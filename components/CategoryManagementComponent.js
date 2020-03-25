@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import TablePaginationComponent from '../components/commons/TablePaginationComponent';
 import CardSimpleLayout from '../layouts/CardSimpleLayout';
-import RoleComponent from './RoleComponent';
 import StatusComponent from './StatusComponent';
 import { Button, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
