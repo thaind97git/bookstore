@@ -115,6 +115,11 @@ const VerticalBarComponent = ({ open, setOpen, router, width }) => {
       link: '/admin/book'
     },
     {
+      label: 'Category',
+      icon: <Group />,
+      link: '/admin/category'
+    },
+    {
       label: 'Setting',
       icon: <Person />,
       link: '/admin/setting'

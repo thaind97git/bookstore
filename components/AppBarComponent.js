@@ -13,10 +13,15 @@ import {
 } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
 import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
+import { logOut, GetCurrentUserAPI } from '../stores/UserState';
 
-import { logOut } from '../stores/UserState';
-
-const connectToRedux = connect(null, dispatch => ({}));
+const connectToRedux = connect(
+  createStructuredSelector({
+    currentUserData: GetCurrentUserAPI.dataSelector
+  }),
+  () => ({})
+);
 
 const styles = theme => ({
   pl1: {
@@ -78,7 +83,7 @@ const styles = theme => ({
   }
 });
 
-const enhance = compose(connectToRedux, withStyles(styles));
+const enhance = compose(withStyles(styles), connectToRedux);
 
 class AppBarComponent extends React.Component {
   constructor(props) {
@@ -97,7 +102,8 @@ class AppBarComponent extends React.Component {
   };
 
   render() {
-    const { title = '', classes } = this.props;
+    const { title = '', classes, currentUserData } = this.props;
+    const { username = '' } = currentUserData || {};
     const { anchorEl } = this.state;
     const openAnchorEl = Boolean(anchorEl);
     return (
@@ -142,7 +148,7 @@ class AppBarComponent extends React.Component {
                 open={openAnchorEl}
                 onClose={this.handleClose}
               >
-                <div className={classes.accountName}>Test 2</div>
+                <div className={classes.accountName}>{username}</div>
                 <Divider />
                 <MenuItem onClick={this.handleClose}>Profile</MenuItem>
                 <MenuItem onClick={() => logOut()}>Sign out</MenuItem>

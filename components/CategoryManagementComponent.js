@@ -5,39 +5,35 @@ import RoleComponent from './RoleComponent';
 import StatusComponent from './StatusComponent';
 import { Button, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
-import {
-  GetAllUserAPI,
-  getAllUser,
-  DeleteUserAPI,
-  deleteUser
-} from '../stores/UserState';
 import { createStructuredSelector } from 'reselect';
 import DialogComponent from './commons/DialogComponent';
+import {
+  GetCategoriesAPI,
+  getCategories,
+  DeleteCategoryAPI,
+  deleteCategory
+} from '../stores/CategoryState';
 
 const connectToRedux = connect(
   createStructuredSelector({
-    userData: GetAllUserAPI.dataSelector,
-    deleteUserData: DeleteUserAPI.dataSelector
+    categoryData: GetCategoriesAPI.dataSelector,
+    deleteCategoryData: DeleteCategoryAPI.dataSelector
   }),
   dispatch => ({
-    getAllUser: ({ pageSize, pageIndex }) =>
-      dispatch(getAllUser({ pageIndex, pageSize })),
-    deleteUser: id => dispatch(deleteUser(id))
+    getCategories: ({ pageSize, pageIndex }) =>
+      dispatch(getCategories({ pageIndex, pageSize })),
+    deleteCategory: id => dispatch(deleteCategory(id))
   })
 );
 
 const HEADERS = [
   {
-    header: 'Full Name',
-    key: 'fullName'
+    header: 'Name',
+    key: 'name'
   },
   {
-    header: 'Username',
-    key: 'username'
-  },
-  {
-    header: 'Role',
-    key: 'role'
+    header: 'Description',
+    key: 'description'
   },
   {
     header: 'Status',
@@ -50,9 +46,8 @@ const HEADERS = [
 ];
 const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
   data.map(item => ({
-    fullName: item.fullName,
-    username: item.username,
-    role: <RoleComponent type={item.role} />,
+    name: item.name,
+    description: item.description,
     status: <StatusComponent status={item.status} />,
     actions: (
       <Button
@@ -70,10 +65,11 @@ const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
     )
   }));
 
-export const UserManagementComponent = ({
-  getAllUser,
-  userData,
-  deleteUserData
+export const BookManagementComponent = ({
+  getCategories,
+  categoryData,
+  deleteCategory,
+  deleteCategoryData
 }) => {
   const [isFetch, setIsFetch] = useState(true);
   const [pageSize, setPageSize] = useState(5);
@@ -83,20 +79,20 @@ export const UserManagementComponent = ({
 
   useEffect(() => {
     if (isFetch) {
-      getAllUser({ pageIndex, pageSize });
+      getCategories({ pageIndex, pageSize });
       setIsFetch(false);
     }
-  }, [isFetch, getAllUser, pageSize, pageIndex]);
+  }, [isFetch, getCategories, pageSize, pageIndex]);
 
   useEffect(() => {
     setIsFetch(true);
   }, [pageIndex, pageSize]);
 
-  if (!userData) {
+  if (!categoryData) {
     return <Grid />;
   }
 
-  const { content = [], totalElements } = userData;
+  const { content = [], totalElements } = categoryData;
   return (
     <Fragment>
       <DialogComponent
@@ -108,23 +104,23 @@ export const UserManagementComponent = ({
           setDialogDelete(false);
         }}
         onOk={() => {
-          deleteUser(idDeleted);
-          deleteUserData && setIsFetch(true);
+          deleteCategory(idDeleted);
+          deleteCategoryData && setIsFetch(true);
           setDialogDelete(false);
         }}
       />
       <CardSimpleLayout
-        header="User Management"
+        header="Book Management"
         body={
           <TablePaginationComponent
-            totalCount={totalElements}
+            totalCount={10}
             headers={HEADERS}
             onChangePageSize={(pageIndex, pageSize) => {
               setPageSize(pageSize);
               setPageIndex(pageIndex);
             }}
             rows={renderData({
-              data: content,
+              data: categoryData,
               setIdDeleted,
               setDialogDelete
             })}
@@ -135,4 +131,4 @@ export const UserManagementComponent = ({
     </Fragment>
   );
 };
-export default connectToRedux(UserManagementComponent);
+export default connectToRedux(BookManagementComponent);

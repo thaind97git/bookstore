@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import React from 'react';
 import PageLayout from '../../layouts/PageLayout';
-// import UserManagementComponent from '../../components/UserManagementComponent';
+import BookManagementComponent from '../../components/BookManagementComponent';
 import AuthenHOC from '../../components/HOC/AuthenHOC';
 
 const HomePage = () => (
@@ -9,7 +9,7 @@ const HomePage = () => (
     <Head>
       <title key="title">Book Management</title>
     </Head>
-    Not implement yet
+    <BookManagementComponent />
   </PageLayout>
 );
 export default AuthenHOC(HomePage);

@@ -8,6 +8,8 @@ import nfetch from '../libs/nfetch';
 
 export const LOGIN_ADMIN = 'LOGIN_ADMIN';
 const GET_CURRENT_USER = 'GET_CURRENT_USER';
+export const DELETE_USER = 'DELETE_USER';
+export const GET_ALL_USER = 'GET_ALL_USER';
 
 export const loginAdminAPI = makeFetchAction(
   LOGIN_ADMIN,
@@ -33,10 +35,10 @@ export const loginAdmin = ({ username, password }) => {
 
 export const loginUserErrorMessageSelector = createErrorSelector(loginAdminAPI);
 
-export const getCurrentUserAPI = makeFetchAction(
+export const GetCurrentUserAPI = makeFetchAction(
   GET_CURRENT_USER,
   nfetch({
-    endpoint: `/api/v2/users/my_profile`,
+    endpoint: `/auth/me`,
     method: 'GET'
   })
 );
@@ -49,15 +51,15 @@ export const verifyLogin = user => {
 };
 
 export const getCurrentUser = () => {
-  return respondToFailure(getCurrentUserAPI.actionCreator(), resp => {
+  return respondToFailure(GetCurrentUserAPI.actionCreator(), resp => {
     if (resp.errors) {
       console.error('Err: ', resp.errors);
       return;
     }
 
-    if (!verifyLogin(resp.user_id)) {
+    if (!verifyLogin(resp.username)) {
       return Router.replace({
-        pathname: '/login'
+        pathname: '/admin/login'
       });
     }
 
@@ -69,3 +71,24 @@ export const logOut = () => {
   removeToken();
   Router.push('/admin/login');
 };
+
+export const DeleteUserAPI = makeFetchAction(DELETE_USER, id =>
+  nfetch({
+    endpoint: `/user/${id}/delete`,
+    method: 'GET'
+  })()
+);
+export const deleteUser = id =>
+  respondToSuccess(DeleteUserAPI.actionCreator(id));
+
+export const GetAllUserAPI = makeFetchAction(
+  GET_ALL_USER,
+  ({ pageSize, pageIndex }) =>
+    nfetch({
+      method: 'GET',
+      endpoint: `/user/guest?pageNumber=${pageIndex}&pageSize=${pageSize}&sortDirection=asc&sortField=id`
+    })()
+);
+
+export const getAllUser = ({ pageSize, pageIndex }) =>
+  respondToSuccess(GetAllUserAPI.actionCreator({ pageSize, pageIndex }));

@@ -4,14 +4,14 @@ import { isServer } from '../../utils';
 import React from 'react';
 
 import {
-  getCurrentUserAPI,
+  GetCurrentUserAPI,
   getCurrentUser,
   verifyLogin
 } from '../../stores/UserState';
 
 const connectWithRedux = connect(
   createStructuredSelector({
-    currentUser: getCurrentUserAPI.dataSelector
+    currentUser: GetCurrentUserAPI.dataSelector
   })
 );
 
@@ -23,23 +23,23 @@ export default function withAuth(AuthComponent) {
         : {};
     };
 
-    // componentDidMount() {
-    //   if (!isServer) {
-    //     this.props.dispatch(getCurrentUser());
-    //   }
-    // }
+    componentDidMount() {
+      if (!isServer) {
+        this.props.dispatch(getCurrentUser());
+      }
+    }
 
     render() {
       const { currentUser } = this.props;
 
       return (
         <div>
-          {/* {!verifyLogin(currentUser) ? (
+          {!verifyLogin(currentUser) ? (
             <div>Loading</div>
           ) : (
             <AuthComponent {...this.props} isLoggedIn={true} />
-          )} */}
-          <AuthComponent {...this.props} isLoggedIn={true} />
+          )}
+          {/* <AuthComponent {...this.props} isLoggedIn={true} /> */}
         </div>
       );
     }

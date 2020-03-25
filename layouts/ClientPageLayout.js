@@ -13,6 +13,9 @@ import CopyrightComponent from '../components/CopyrightComponent';
 import { withRouter } from 'next/router';
 import { compose } from 'recompose';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
+import { pick } from 'lodash/fp';
+const connectToRedux = connect(pick(['shopingCard']));
 
 const styles = theme => ({
   menu: {
@@ -34,7 +37,7 @@ const styles = theme => ({
     padding: theme.spacing(6)
   }
 });
-const enhance = compose(withStyles(styles), withRouter);
+const enhance = compose(withStyles(styles), withRouter, connectToRedux);
 
 class EmptyPageLayout extends React.Component {
   constructor(props) {
@@ -44,36 +47,36 @@ class EmptyPageLayout extends React.Component {
     };
   }
 
-  MENU_CLIENT = [
-    {
-      link: '/',
-      label: 'Home',
-      icon: <Home />
-    },
-    {
-      link: '/details',
-      label: 'Categories',
-      icon: <MenuBook />
-    },
-    {
-      link: '/shoping-card',
-      label: 'Home',
-      icon: (
-        <Badge badgeContent={4} color="secondary">
-          <ShoppingCart />
-        </Badge>
-      )
-    }
-  ];
   onChangeMenuSelected = (event, value) =>
     this.setState({ ...this.state, menuSelected: value });
 
-  componentDidMount() {}
-
   render() {
     const { value } = this.state;
-    const { classes, children, router } = this.props;
-    console.log(router.pathname);
+    const { classes, children, router, shopingCard } = this.props;
+    const MENU_CLIENT = [
+      {
+        link: '/',
+        label: 'Home',
+        icon: <Home />
+      },
+      {
+        link: '/details',
+        label: 'Categories',
+        icon: <MenuBook />
+      },
+      {
+        link: '/shoping-card',
+        label: 'Card',
+        icon: (
+          <Badge
+            badgeContent={`${!!shopingCard ? shopingCard.length : 0}`}
+            color="secondary"
+          >
+            <ShoppingCart />
+          </Badge>
+        )
+      }
+    ];
     return (
       <Fragment>
         <AppBar color="default" position="fixed">
@@ -92,7 +95,7 @@ class EmptyPageLayout extends React.Component {
               onChange={this.onChangeMenuSelected}
               className={classes.menu}
             >
-              {this.MENU_CLIENT.map((item, key) => (
+              {MENU_CLIENT.map((item, key) => (
                 <BottomNavigationAction
                   key={key}
                   href={item.link}
@@ -104,17 +107,12 @@ class EmptyPageLayout extends React.Component {
                   icon={item.icon}
                 />
               ))}
-              <BottomNavigationAction
-                href="/"
-                className={classes.menuAction}
-                label="Home"
-                value=""
-                icon={<Home />}
-              />
             </BottomNavigation>
           </Toolbar>
         </AppBar>
-        <main style={{ paddingTop: 64 }}>{children}</main>
+        <main style={{ paddingTop: 64, background: '#e8eaf5' }}>
+          {children}
+        </main>
         <footer className={classes.footer}>
           <Typography variant="h6" align="center" gutterBottom>
             Footer
