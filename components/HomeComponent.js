@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Grid,
@@ -11,10 +11,19 @@ import { connect } from 'react-redux';
 import { ADD_TO_CARD } from '../stores/CardState';
 import CardBookComponent from './CardBookComponent';
 import PaginationComponent from './PaginationComponent';
+import { getBooks, GetBooksAPI } from '../stores/BookState';
+import { createStructuredSelector } from 'reselect';
 
-const connectToRedux = connect(null, dispatch => ({
-  addToCard: card => dispatch({ type: ADD_TO_CARD, payload: card })
-}));
+const connectToRedux = connect(
+  createStructuredSelector({
+    booksData: GetBooksAPI.dataSelector
+  }),
+  dispatch => ({
+    addToCard: card => dispatch({ type: ADD_TO_CARD, payload: card }),
+    getBooks: ({ pageIndex, pageSize }) =>
+      dispatch(getBooks({ pageSize, pageIndex }))
+  })
+);
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,61 +53,24 @@ const useStyles = makeStyles(theme => ({
   cardGrid: {
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8)
+  },
+  notFoundBook: {
+    margin: `${theme.spacing(7)} auto`
   }
 }));
 
-const BOOKS = [
-  {
-    id: 0,
-    name: 'Nerver eat alone',
-    description:
-      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
-    coverPicture: '/static/images/book1.png',
-    price: 10000
-  },
-  {
-    id: 1,
-    name: 'Nerver eat alone 1',
-    description:
-      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
-    coverPicture: '/static/images/book1.png',
-    price: 10000
-  },
-  {
-    id: 2,
-    name: 'Nerver eat alone 2',
-    description:
-      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
-    coverPicture: '/static/images/book1.png',
-    price: 10000
-  },
-  {
-    id: 3,
-    name: 'Nerver eat alone 3',
-    description:
-      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
-    coverPicture: '/static/images/book1.png',
-    price: 10000
-  },
-  {
-    id: 4,
-    name: 'Nerver eat alone 4',
-    description:
-      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
-    coverPicture: '/static/images/book1.png',
-    price: 10000
-  },
-  {
-    id: 5,
-    name: 'Nerver eat alone 5',
-    description:
-      'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.',
-    coverPicture: '/static/images/book1.png',
-    price: 10000
-  }
-];
+function HomeComponent({ addToCard, booksData, getBooks }) {
+  const classes = useStyles();
+  const [isFetch, setIsFetch] = useState(true);
+  const [pageIndex, setPageIndex] = useState(1);
 
-function HomeComponent({ bookData = BOOKS, addToCard }) {
+  useEffect(() => {
+    if (isFetch) {
+      getBooks({ pageSize: 5, pageIndex });
+      setIsFetch(false);
+    }
+  }, [isFetch, getBooks, pageIndex]);
+
   const params = {
     spaceBetween: 30,
     centeredSlides: true,
@@ -118,11 +90,10 @@ function HomeComponent({ bookData = BOOKS, addToCard }) {
       width: '50%'
     }
   };
-  const classes = useStyles();
 
+  const { content = [], totalElements = 0 } = booksData || {};
   return (
     <React.Fragment>
-      {/* Hero unit */}
       <div className={classes.heroContent}>
         <Swiper {...params}>
           <img
@@ -184,14 +155,24 @@ function HomeComponent({ bookData = BOOKS, addToCard }) {
       </div>
       <Container className={classes.cardGrid} maxWidth="md">
         <Grid container spacing={4}>
-          {bookData.map((book, index) => (
-            <Grid item key={index} xs={12} sm={6} md={4}>
-              <CardBookComponent addToCard={addToCard} book={book} />
-            </Grid>
-          ))}
+          {!content.length ? (
+            <h1 className={classes.notFoundBook}>Not found any book</h1>
+          ) : (
+            content.map((book, index) => (
+              <Grid item key={index} xs={12} sm={6} md={4}>
+                <CardBookComponent addToCard={addToCard} book={book} />
+              </Grid>
+            ))
+          )}
         </Grid>
         <Grid style={{ marginTop: 24 }} container justify="center">
-          <PaginationComponent totalCount={bookData.length} />
+          <PaginationComponent
+            actions={index => {
+              setPageIndex(index + 1);
+              setIsFetch(true);
+            }}
+            totalCount={totalElements}
+          />
         </Grid>
       </Container>
     </React.Fragment>

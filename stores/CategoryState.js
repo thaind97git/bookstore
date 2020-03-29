@@ -2,11 +2,21 @@ import { makeFetchAction } from 'redux-api-call';
 import nfetch from '../libs/nfetch';
 import { respondToSuccess } from './middlewares/api-reaction';
 
+export const GET_ALL_CATEGORIES = 'GET_ALL_CATEGORIES';
 export const GET_CATEGORIES = 'GET_CATEGORIES';
 export const SAVE_CATEGORY = 'SAVE_CATEGORY';
 export const GET_CATEGORY_DETAILS = 'GET_CATEGORY_DETAILS';
 export const DELETE_CATEGORY = 'DELETE_CATEGORY';
 export const SEARCH_CATEGORY = 'SEARCH_CATEGORY';
+
+export const GetAllCategoriesAPI = makeFetchAction(GET_CATEGORIES, () =>
+  nfetch({
+    method: 'GET',
+    endpoint: `/category`
+  })()
+);
+export const getAllCategories = () =>
+  respondToSuccess(GetAllCategoriesAPI.actionCreator());
 
 export const GetCategoriesAPI = makeFetchAction(
   GET_CATEGORIES,

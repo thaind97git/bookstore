@@ -112,14 +112,14 @@ export const BookManagementComponent = ({
         header="Book Management"
         body={
           <TablePaginationComponent
-            totalCount={10}
+            totalCount={totalElements}
             headers={HEADERS}
             onChangePageSize={(pageIndex, pageSize) => {
               setPageSize(pageSize);
               setPageIndex(pageIndex);
             }}
             rows={renderData({
-              data: categoryData,
+              data: content,
               setIdDeleted,
               setDialogDelete
             })}

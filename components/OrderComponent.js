@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -7,7 +7,7 @@ import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import { Container } from '@material-ui/core';
+import { Container, Grid, FormControl, TextField } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,6 +27,51 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const RenderTextField = props => {
+  return (
+    <TextField
+      {...props}
+      variant="outlined"
+      style={{ margin: '10px 0' }}
+      fullWidth
+      InputLabelProps={{
+        shrink: true
+      }}
+    />
+  );
+};
+
+const YourAddress = ({ classes = {} }) => {
+  return (
+    <Grid container>
+      <Grid item xs={12}>
+        <h4 className={classes.labelMargin}>Your Name</h4>
+        <FormControl fullWidth required>
+          <RenderTextField required name="name" />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <h4 className={classes.labelMargin}>Your Address</h4>
+        <FormControl fullWidth required>
+          <RenderTextField required name="name" />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <h4 className={classes.labelMargin}>Your Phone</h4>
+        <FormControl fullWidth required>
+          <RenderTextField required name="name" />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <h4 className={classes.labelMargin}>Your Email</h4>
+        <FormControl fullWidth required>
+          <RenderTextField required name="name" />
+        </FormControl>
+      </Grid>
+    </Grid>
+  );
+};
+
 function getSteps() {
   return ['Your Address', 'Payment and Buy', 'Create an ad'];
 }
@@ -34,9 +79,7 @@ function getSteps() {
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return `For each ad campaign that you create, you can control how much
-              you're willing to spend on clicks and conversions, which networks
-              and geographical locations you want your ads to show on, and more.`;
+      return <YourAddress />;
     case 1:
       return 'An ad group contains one or more ads which target a shared set of keywords.';
     case 2:
