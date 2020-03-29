@@ -49,3 +49,6 @@ export const formatDisplayNumber = number => {
 
   return strNumberArr.join('');
 };
+
+export const getShortTitle = (title = '') =>
+  title.length > 20 ? `${title.substring(0, 20)}...` : title;

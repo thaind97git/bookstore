@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import { AddShoppingCart, NavigateNext } from '@material-ui/icons';
 import RLink from '../layouts/RLink';
+import { getShortTitle } from '../utils';
 const useStyles = makeStyles(theme => ({
   media: {
     height: 0,
@@ -45,13 +46,13 @@ const CardBookComponent = ({ book, addToCard }) => {
             </RLink>
           </Tooltip>
         }
-        title={<small>Never eat alone</small>}
-        subheader="Keith ferrazzi"
+        title={<small>{getShortTitle(book.title)}</small>}
+        subheader={book.author}
       />
       <CardMedia
         className={classes.media}
-        image={book.coverPicture}
-        title="Paella dish"
+        image={`data:image/jpeg;base64,${book.coverPicture}`}
+        title={book.title}
       />
       {/* <Tooltip title="Click to view full details" aria-label="details">
         <IconButton
@@ -74,9 +75,7 @@ const CardBookComponent = ({ book, addToCard }) => {
             <AddShoppingCart />
           </IconButton>
         </Tooltip>
-        {/* <IconButton aria-label="share">
-          <Share />
-        </IconButton> */}
+        {book.price} $
       </CardActions>
     </Card>
   );

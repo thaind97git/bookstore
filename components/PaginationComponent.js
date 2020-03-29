@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate';
-const PAGE_SIZE_DEFAULT = 10;
+const PAGE_SIZE_DEFAULT = 5;
 const PAGE_DEFAULT = 0;
 class PaginationComponent extends React.Component {
   handlePageChange(state) {

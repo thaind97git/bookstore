@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import React from 'react';
-import PageLayout from '../../layouts/PageLayout';
-import BookManagementComponent from '../../components/BookManagementComponent';
-import AuthenHOC from '../../components/HOC/AuthenHOC';
+import PageLayout from '../../../layouts/PageLayout';
+import BookManagementComponent from '../../../components/BookManagementComponent';
+import AuthenHOC from '../../../components/HOC/AuthenHOC';
 
 const HomePage = () => (
   <PageLayout title="">

@@ -13,6 +13,7 @@ import {
   DeleteBookAPI,
   deleteBook
 } from '../stores/BookState';
+import RLink from '../layouts/RLink';
 
 const connectToRedux = connect(
   createStructuredSelector({
@@ -81,10 +82,11 @@ export const BookManagementComponent = ({
   const [pageIndex, setPageIndex] = useState(1);
   const [dialogDelete, setDialogDelete] = useState(false);
   const [idDeleted, setIdDeleted] = useState(null);
+  const [isDelete, setIsDelete] = useState(true);
 
   useEffect(() => {
     if (isFetch) {
-      // getBooks({ pageIndex, pageSize });
+      getBooks({ pageIndex, pageSize });
       setIsFetch(false);
     }
   }, [isFetch, getBooks, pageSize, pageIndex]);
@@ -115,7 +117,21 @@ export const BookManagementComponent = ({
         }}
       />
       <CardSimpleLayout
-        header="Book Management"
+        header={
+          <Grid container justify="space-between">
+            <span>Book Management</span>
+            <RLink href="/admin/book/add-new">
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                disableElevation
+              >
+                Add New Book
+              </Button>
+            </RLink>
+          </Grid>
+        }
         body={
           <TablePaginationComponent
             totalCount={totalElements}
