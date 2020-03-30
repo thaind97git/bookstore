@@ -1,9 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import TablePaginationComponent from '../components/commons/TablePaginationComponent';
 import CardSimpleLayout from '../layouts/CardSimpleLayout';
-import RoleComponent from './RoleComponent';
-import StatusComponent from './StatusComponent';
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, Tooltip, IconButton } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import DialogComponent from './commons/DialogComponent';
@@ -14,82 +12,133 @@ import {
   deleteBook
 } from '../stores/BookState';
 import RLink from '../layouts/RLink';
+import { formatDisplayNumber, getShortString } from '../utils';
+import { GetAllCategoriesAPI, getAllCategories } from '../stores/CategoryState';
+import { UnfoldMore } from '@material-ui/icons';
+
+const ISBN_DOMAIN = process.env.ISBN_DOMAIN || 'https://isbnsearch.org/isbn';
 
 const connectToRedux = connect(
   createStructuredSelector({
     bookData: GetBooksAPI.dataSelector,
+    allCategoryData: GetAllCategoriesAPI.dataSelector,
     deleteBookData: DeleteBookAPI.dataSelector
   }),
   dispatch => ({
     getBooks: ({ pageSize, pageIndex }) =>
       dispatch(getBooks({ pageIndex, pageSize })),
+    getAllCategories: () => dispatch(getAllCategories()),
     deleteBook: id => dispatch(deleteBook(id))
   })
 );
 
 const HEADERS = [
   {
-    header: 'Name',
-    key: 'name'
+    header: 'ISBN',
+    key: 'isbn'
   },
   {
-    header: 'Image',
-    key: 'image'
+    header: 'Title',
+    key: 'title'
   },
   {
-    header: 'Categories',
-    key: 'categories'
+    header: 'Price',
+    key: 'price'
   },
   {
-    header: 'Status',
-    key: 'status'
+    header: 'Author',
+    key: 'author'
+  },
+  {
+    header: 'Publisher',
+    key: 'publisher'
+  },
+  {
+    header: 'Category',
+    key: 'category'
   },
   {
     header: 'Actions',
     key: 'actions'
   }
 ];
-const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
-  data.map(item => ({
-    fullName: item.fullName,
-    username: item.username,
-    role: <RoleComponent type={item.role} />,
-    status: <StatusComponent status={item.status} />,
-    actions: (
-      <Button
-        size="small"
-        variant="contained"
-        color="secondary"
-        disableElevation
-        onClick={() => {
-          setDialogDelete(true);
-          setIdDeleted(item.id);
-        }}
-      >
-        Delete
-      </Button>
-    )
-  }));
+const renderData = ({
+  data = [],
+  setDialogDelete,
+  setIdDeleted,
+  categories = []
+}) =>
+  data.map(item => {
+    const currentCategory =
+      categories.find(cate => cate.id === item.categoryId) || {};
+    return {
+      isbn: (
+        <a
+          href={`${ISBN_DOMAIN}/${item.isbn}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {item.isbn}
+        </a>
+      ),
+      title: (
+        <Tooltip title={item.title}>
+          <div>{getShortString(item.title)}</div>
+        </Tooltip>
+      ),
+      price: `$ ${formatDisplayNumber(item.price)}`,
+      author: (
+        <Tooltip title={item.author}>
+          <span>{item.author}</span>
+        </Tooltip>
+      ),
+      publisher: item.publisher,
+      category: currentCategory.name || item.categoryId,
+      actions: (
+        <Fragment>
+          <Tooltip title="View details">
+            <IconButton onClick={() => {}}>
+              <UnfoldMore />
+            </IconButton>
+          </Tooltip>
+          <Button
+            size="small"
+            variant="contained"
+            color="secondary"
+            disableElevation
+            onClick={() => {
+              setDialogDelete(true);
+              setIdDeleted(item.isbn);
+            }}
+          >
+            Delete
+          </Button>
+        </Fragment>
+      )
+    };
+  });
 
 export const BookManagementComponent = ({
   getBooks,
   bookData,
   deleteBook,
-  deleteBookData
+  deleteBookData,
+  getAllCategories,
+  allCategoryData
 }) => {
   const [isFetch, setIsFetch] = useState(true);
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(1);
   const [dialogDelete, setDialogDelete] = useState(false);
   const [idDeleted, setIdDeleted] = useState(null);
-  const [isDelete, setIsDelete] = useState(true);
 
   useEffect(() => {
     if (isFetch) {
       getBooks({ pageIndex, pageSize });
+      getAllCategories();
       setIsFetch(false);
     }
-  }, [isFetch, getBooks, pageSize, pageIndex]);
+  }, [isFetch, getBooks, pageSize, pageIndex, getAllCategories]);
 
   useEffect(() => {
     setIsFetch(true);
@@ -112,7 +161,6 @@ export const BookManagementComponent = ({
         }}
         onOk={() => {
           deleteBook(idDeleted);
-          deleteBookData && setIsFetch(true);
           setDialogDelete(false);
         }}
       />
@@ -143,7 +191,8 @@ export const BookManagementComponent = ({
             rows={renderData({
               data: content,
               setIdDeleted,
-              setDialogDelete
+              setDialogDelete,
+              categories: allCategoryData || []
             })}
             striped
           />

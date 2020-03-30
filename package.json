@@ -26,7 +26,7 @@
     "brn": "^1.0.3",
     "clsx": "^1.0.4",
     "compose": "^0.1.2",
-    "date-fns": "^2.0.0-beta.5",
+    "date-fns": "^2.11.1",
     "dotenv": "^8.2.0",
     "dotenv-webpack": "^1.7.0",
     "eslint-plugin-babel": "^5.3.0",

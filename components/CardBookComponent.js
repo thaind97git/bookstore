@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import { AddShoppingCart, NavigateNext } from '@material-ui/icons';
 import RLink from '../layouts/RLink';
-import { getShortTitle } from '../utils';
+import { getShortString } from '../utils';
 const useStyles = makeStyles(theme => ({
   media: {
     height: 0,
@@ -46,7 +46,7 @@ const CardBookComponent = ({ book, addToCard }) => {
             </RLink>
           </Tooltip>
         }
-        title={<small>{getShortTitle(book.title)}</small>}
+        title={<small>{getShortString(book.title)}</small>}
         subheader={book.author}
       />
       <CardMedia
@@ -54,18 +54,12 @@ const CardBookComponent = ({ book, addToCard }) => {
         image={`data:image/jpeg;base64,${book.coverPicture}`}
         title={book.title}
       />
-      {/* <Tooltip title="Click to view full details" aria-label="details">
-        <IconButton
-          onClick={() => Router.push(`details?id=${book.id}`)}
-          aria-label="view details"
-        > */}
-      <CardContent>
+
+      <CardContent style={{ minHeight: 100 }}>
         <Typography variant="body2" color="textSecondary" component="p">
-          {book.description}
+          {getShortString(book.description, 150)}
         </Typography>
       </CardContent>
-      {/* </IconButton>
-      </Tooltip> */}
       <CardActions disableSpacing>
         <Tooltip title="Add to card" aria-label="add">
           <IconButton

@@ -50,5 +50,22 @@ export const formatDisplayNumber = number => {
   return strNumberArr.join('');
 };
 
-export const getShortTitle = (title = '') =>
-  title.length > 20 ? `${title.substring(0, 20)}...` : title;
+export const getShortString = (title = '', character = 20) =>
+  title.length > 20 ? `${title.substring(0, character)}...` : title;
+
+function getExtension(filename) {
+  var parts = filename.split('.');
+  return parts[parts.length - 1];
+}
+
+export const isImage = filename => {
+  var ext = getExtension(filename);
+  switch (ext.toLowerCase()) {
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+      return true;
+    default:
+      return false;
+  }
+};

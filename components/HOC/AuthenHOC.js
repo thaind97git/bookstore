@@ -8,12 +8,23 @@ import {
   getCurrentUser,
   verifyLogin
 } from '../../stores/UserState';
+import { Backdrop, withStyles, CircularProgress } from '@material-ui/core';
+import { compose } from 'recompose';
 
 const connectWithRedux = connect(
   createStructuredSelector({
     currentUser: GetCurrentUserAPI.dataSelector
   })
 );
+
+const styles = theme => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
+  }
+});
+
+const enhance = compose(connectWithRedux, withStyles(styles));
 
 export default function withAuth(AuthComponent) {
   class AuthenHOC extends React.Component {
@@ -30,20 +41,20 @@ export default function withAuth(AuthComponent) {
     }
 
     render() {
-      const { currentUser } = this.props;
-
+      const { currentUser, classes } = this.props;
       return (
         <div>
           {!verifyLogin(currentUser) ? (
-            <div>Loading</div>
+            <Backdrop className={classes.backdrop} open={true}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
           ) : (
             <AuthComponent {...this.props} isLoggedIn={true} />
           )}
-          {/* <AuthComponent {...this.props} isLoggedIn={true} /> */}
         </div>
       );
     }
   }
 
-  return connectWithRedux(AuthenHOC);
+  return enhance(AuthenHOC);
 }

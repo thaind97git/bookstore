@@ -14,6 +14,7 @@ export default ({ endpoint, method = 'POST' }) => (
   variables = {},
   opts = {}
 ) => {
+  const isFormData = variables instanceof FormData;
   let curEndpoint = process.env.DOMAIN_SERVER + endpoint;
 
   if (method === 'GET') {
@@ -29,7 +30,7 @@ export default ({ endpoint, method = 'POST' }) => (
       endpoint: curEndpoint,
       method,
       headers: getHeaders(opts.headers),
-      body: JSON.stringify(variables)
+      body: isFormData ? variables : JSON.stringify(variables)
     };
   }
 };
