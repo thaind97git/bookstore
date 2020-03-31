@@ -15,7 +15,7 @@ import { compose } from 'recompose';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { pick } from 'lodash/fp';
-const connectToRedux = connect(pick(['shopingCard']));
+const connectToRedux = connect(pick(['shopingCart']));
 
 const styles = theme => ({
   menu: {
@@ -52,7 +52,7 @@ class EmptyPageLayout extends React.Component {
 
   render() {
     const { value } = this.state;
-    const { classes, children, router, shopingCard } = this.props;
+    const { classes, children, router, shopingCart } = this.props;
     const MENU_CLIENT = [
       {
         link: '/',
@@ -69,7 +69,7 @@ class EmptyPageLayout extends React.Component {
         label: 'Card',
         icon: (
           <Badge
-            badgeContent={`${!!shopingCard ? shopingCard.length : 0}`}
+            badgeContent={`${!!shopingCart ? shopingCart.length : 0}`}
             color="secondary"
           >
             <ShoppingCart />
@@ -120,16 +120,16 @@ class EmptyPageLayout extends React.Component {
         </main>
         <footer className={classes.footer}>
           <Typography variant="h6" align="center" gutterBottom>
-            Footer
+            The book store
           </Typography>
-          <Typography
+          {/* <Typography
             variant="subtitle1"
             align="center"
             color="textSecondary"
             component="p"
           >
             Something here to give the footer a purpose!
-          </Typography>
+          </Typography> */}
           <CopyrightComponent link="http://dev-blogs.netlify.com/">
             Thaind97.dev
           </CopyrightComponent>

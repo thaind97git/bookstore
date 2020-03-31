@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   Typography,
@@ -14,6 +14,7 @@ import { createStructuredSelector } from 'reselect';
 import SearchIcon from '@material-ui/icons/Search';
 import { searchOrderByCode, SearchOrderByCodeAPI } from '../stores/OrderState';
 import CardOrderDetailsComponent from './CardOrderDetailsComponent';
+import { TOAST_ERROR, TOAST_SUCCESS } from '../enums/actions';
 
 const connectToRedux = connect(
   createStructuredSelector({
@@ -21,14 +22,22 @@ const connectToRedux = connect(
   }),
   dispatch => ({
     searchOrderByCode: ({ code, customerEmail }) =>
-      dispatch(searchOrderByCode({ code, customerEmail }))
+      dispatch(searchOrderByCode({ code, customerEmail })),
+    displayToast: (message, type = TOAST_SUCCESS) =>
+      dispatch({
+        type: type,
+        notification: {
+          message
+        }
+      })
   })
 );
 
 const useStyles = makeStyles(theme => ({
   heroContent: {
-    background: 'url(https://d3rd29nk50moi4.cloudfront.net/spacebg.jpg)',
-    padding: theme.spacing(8, 0, 6)
+    background: 'url(/static/images/order-details-bg.jpg)',
+    padding: theme.spacing(8, 0, 6),
+    minHeight: '80vh'
   },
   heroButtons: {
     marginTop: theme.spacing(4)
@@ -68,19 +77,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function HomeComponent({ orderDetailsData, searchOrderByCode, getBooks }) {
+function HomeComponent({ orderDetailsData, searchOrderByCode, displayToast }) {
   const classes = useStyles();
   const [search, setSearch] = useState('');
   const [email, setEmail] = useState('');
-
-  // useEffect(() => {
-  //   if (isFetch) {
-  //     getBooks({ pageSize: 5, pageIndex });
-  //     setIsFetch(false);
-  //   }
-  // }, [isFetch, getBooks, pageIndex]);
-
-  console.log({ orderDetailsData });
 
   return (
     <div style={{ minHeight: '80vh' }}>
@@ -95,14 +95,6 @@ function HomeComponent({ orderDetailsData, searchOrderByCode, getBooks }) {
           >
             Order Details
           </Typography>
-          {/* <Typography
-            variant="h5"
-            align="center"
-            paragraph
-            style={{ color: 'white' }}
-          >
-            Input your code to view full details
-          </Typography> */}
           <div className={classes.heroButtons}>
             <Grid container spacing={2} justify="center">
               <Grid item>
@@ -120,6 +112,11 @@ function HomeComponent({ orderDetailsData, searchOrderByCode, getBooks }) {
                 <Paper
                   onSubmit={event => {
                     event.preventDefault();
+                    if (!search) return;
+                    if (!email) {
+                      displayToast('Please input your email!', TOAST_ERROR);
+                      return;
+                    }
                     searchOrderByCode({
                       code: search,
                       customerEmail: email
@@ -151,12 +148,14 @@ function HomeComponent({ orderDetailsData, searchOrderByCode, getBooks }) {
             </Grid>
           </div>
         </Container>
+        <Container style={{ paddingTop: 40, paddingBottom: 40 }}>
+          <div>
+            {orderDetailsData && (
+              <CardOrderDetailsComponent orderDetails={orderDetailsData} />
+            )}
+          </div>
+        </Container>
       </div>
-      <Container style={{ paddingTop: 40, paddingBottom: 40 }}>
-        {orderDetailsData && (
-          <CardOrderDetailsComponent orderDetails={orderDetailsData} />
-        )}
-      </Container>
     </div>
   );
 }

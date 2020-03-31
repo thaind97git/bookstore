@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -13,38 +13,33 @@ import DeleteOutline from '@material-ui/icons/DeleteOutline';
 import { pick } from 'lodash/fp';
 
 import { connect } from 'react-redux';
-import { REMOVE_ITEM, REMOVE_CARD } from '../stores/CardState';
+import { REMOVE_ITEM, REMOVE_CART } from '../stores/CartState';
 import { formatDisplayNumber } from '../utils';
 import RLink from '../layouts/RLink';
+import Router from 'next/router';
 
-const connectToRedux = connect(pick(['shopingCard']), dispatch => ({
+const connectToRedux = connect(pick(['shopingCart']), dispatch => ({
   removeItem: id => dispatch({ type: REMOVE_ITEM, payload: id }),
-  removeCard: () => dispatch({ type: REMOVE_CARD })
+  removeCard: () => dispatch({ type: REMOVE_CART })
 }));
 
-const ShopingCardComponent = ({ shopingCard = [], removeItem, removeCard }) => {
-  const totalPrice = shopingCard
-    ? shopingCard.reduce((prev, card) => {
+const ShopingCartComponent = ({ shopingCart = [], removeItem, removeCard }) => {
+  const totalPrice = shopingCart
+    ? shopingCart.reduce((prev, card) => {
         return prev + card.price;
       }, 0)
     : 0;
-  const [isLoading, setIsLoading] = useState(true);
-  const [showPaymentButton, setShowPaymentButton] = useState(true);
-
-  useEffect(() => {
-    !!shopingCard.length && setIsLoading(false);
-  }, [shopingCard]);
   return (
     <Container style={{ minHeight: '80vh', marginTop: 30 }}>
       <Card elevation={0}>
         <CardContent style={{ padding: 0 }}>
           <MaterialTable
+            isLoading={false}
             components={{
               Container: props => <Paper {...props} elevation={0} />
             }}
-            isLoading={isLoading}
             title="Shopping Cart"
-            data={shopingCard || []}
+            data={shopingCart || []}
             actions={[
               {
                 icon: () => <DeleteOutline />,
@@ -63,8 +58,8 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem, removeCard }) => {
               }
             ]}
             columns={[
-              { title: 'Book', field: 'title' },
               { title: 'Quantity', field: 'quantity', type: 'numeric' },
+              { title: 'Book', field: 'title' },
               { title: 'Price', field: 'price', type: 'currency' }
             ]}
             options={{
@@ -82,39 +77,33 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem, removeCard }) => {
               }
             }}
           />
-
-          {/* <div
-            style={{ padding: '10px 20px 10px 10px', textAlign: 'right' }}
-          ></div> */}
         </CardContent>
-        {showPaymentButton && (
-          <CardActions style={{ justifyContent: 'flex-end' }}>
-            <Typography variant="h4" style={{ margin: '20px 10px 20px 0px' }}>
-              Total: $ {Number(formatDisplayNumber(totalPrice)).toFixed(4)}
-            </Typography>
-            <RLink href="/order">
-              <Button
-                variant="outlined"
-                color="primary"
-                style={{ textTransform: 'none' }}
-              >
-                Payment
-              </Button>
-            </RLink>
-            <RLink href="/">
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ textTransform: 'none' }}
-              >
-                Buy More
-              </Button>
-            </RLink>
-          </CardActions>
-        )}
+        <CardActions style={{ justifyContent: 'flex-end' }}>
+          <Typography variant="h4" style={{ margin: '20px 10px 20px 0px' }}>
+            Total: $ {Number(formatDisplayNumber(totalPrice)).toFixed(4)}
+          </Typography>
+          <Button
+            disabled={shopingCart.length ? false : true}
+            variant="outlined"
+            color="primary"
+            style={{ textTransform: 'none' }}
+            onClick={() => Router.push('/order')}
+          >
+            Checkout now
+          </Button>
+          <RLink href="/">
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ textTransform: 'none' }}
+            >
+              Buy More
+            </Button>
+          </RLink>
+        </CardActions>
       </Card>
     </Container>
   );
 };
 
-export default connectToRedux(ShopingCardComponent);
+export default connectToRedux(ShopingCartComponent);

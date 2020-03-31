@@ -1,26 +1,31 @@
 import { getCard, removeCard, saveCard } from '../libs/card-libs';
-export const ADD_TO_CARD = 'ADD_TO_CARD';
+export const ADD_TO_CART = 'ADD_TO_CART';
 export const REMOVE_ITEM = 'REMOVE_ITEM';
-export const REMOVE_CARD = 'REMOVE_CARD';
+export const REMOVE_CART = 'REMOVE_CART';
 
 export default {
-  shopingCard: (state = [], { type, payload }) => {
+  shopingCart: (state = [], { type, payload = {} }) => {
     state = getCard() || [];
-    if (type === ADD_TO_CARD) {
+    if (type === ADD_TO_CART) {
+      let { book = {}, quantity } = payload;
+      quantity = Number(quantity);
+      if (state.length + quantity > 15) {
+        return;
+      }
       const newState = [...state];
-      const existedCard = state.find(card => card.isbn === payload.isbn);
+      const existedCard = state.find(card => card.isbn === book.isbn);
       if (!existedCard) {
         newState.push({
-          isbn: payload.isbn,
-          title: payload.title,
-          quantity: 1,
-          price: payload.price
+          isbn: book.isbn,
+          title: book.title,
+          quantity: quantity,
+          price: book.price
         });
       } else {
         for (let card of newState) {
-          if (card.isbn === payload.isbn) {
-            card.quantity += 1;
-            card.price += payload.price;
+          if (card.isbn === book.isbn) {
+            card.quantity += quantity;
+            card.price += book.price;
           }
         }
       }
@@ -35,7 +40,7 @@ export default {
       return filterState;
     }
 
-    if (type === REMOVE_CARD) {
+    if (type === REMOVE_CART) {
       removeCard();
       return [];
     }

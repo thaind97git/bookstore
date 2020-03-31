@@ -9,7 +9,7 @@ function CopyrightComponent({ children, link }) {
         {children}
       </Link>{' '}
       {new Date().getFullYear()}
-      {'.'}
+      {'.'} All Rights Reserved.
     </Typography>
   );
 }

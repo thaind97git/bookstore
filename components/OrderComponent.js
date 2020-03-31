@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import { saveOrder } from '../stores/OrderState';
 import moment from 'moment';
 
-const cardSelector = state => state.shopingCard;
+const cardSelector = state => state.shopingCart;
 
 const connectToRedux = connect(
   createStructuredSelector({

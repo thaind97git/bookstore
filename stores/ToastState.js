@@ -1,7 +1,7 @@
 import { merge, get } from 'lodash/fp';
 import { ACTIONS } from 'redux-api-call';
 import { LOGIN_ADMIN, DELETE_USER } from './UserState';
-import { ADD_TO_CARD, REMOVE_ITEM } from './CardState';
+import { ADD_TO_CART, REMOVE_ITEM } from './CartState';
 import { SAVE_BOOK, DELETE_BOOK } from './BookState';
 import { SAVE_ORDERS } from './OrderState';
 import { DEFAULT_OPTION_TOAST } from '../utils/options';
@@ -56,9 +56,6 @@ export default {
         case DELETE_USER:
           msgNotify = 'Delete Success';
           break;
-        case ADD_TO_CARD:
-          msgNotify = 'Add to card success';
-          break;
         case REMOVE_ITEM:
           msgNotify = 'Remove item from card success';
           break;
@@ -93,9 +90,6 @@ export default {
         case DELETE_USER:
           msgNotify = 'Delete Fail';
           break;
-        case ADD_TO_CARD:
-          msgNotify = 'Add to card fail';
-          break;
         case REMOVE_ITEM:
           msgNotify = 'Remove item from card fail';
           break;
@@ -121,6 +115,20 @@ export default {
       );
     } else {
       switch (type) {
+        case ADD_TO_CART:
+          notification.message = 'Add to cart success';
+          const newNotiwihtCart = merge(DEFAULT_OPTION_TOAST(), notification);
+          newNotiwihtCart.options.variant = TOAST_SUCCESS;
+          return {
+            ...state,
+            notifications: [
+              ...state.notifications,
+              {
+                ...newNotiwihtCart,
+                key: newNotiwihtCart.options.key
+              }
+            ]
+          };
         case TOAST_INFO:
         case TOAST_SUCCESS:
         case TOAST_ERROR:

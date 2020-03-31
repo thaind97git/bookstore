@@ -2,6 +2,7 @@ import { makeFetchAction } from 'redux-api-call';
 import nfetch from '../libs/nfetch';
 import { respondToSuccess } from './middlewares/api-reaction';
 import Router from 'next/router';
+import { getResetter } from '../libs';
 
 export const GET_BOOKS = 'GET_BOOKS';
 export const SAVE_BOOK = 'SAVE_BOOK';
@@ -17,6 +18,7 @@ export const GetBooksAPI = makeFetchAction(
       endpoint: `/book?pageNumber=${pageIndex}&pageSize=${pageSize}&sortDirection=asc&sortField=isbn`
     })()
 );
+export const GetBooksResettor = getResetter(GetBooksAPI);
 export const getBooks = ({ pageSize, pageIndex }) =>
   respondToSuccess(GetBooksAPI.actionCreator({ pageIndex, pageSize }));
 
@@ -50,7 +52,7 @@ export const SearchBookAPI = makeFetchAction(SEARCH_BOOK, searchParam =>
   nfetch({
     method: 'GET',
     endpoint: `/book/search?query=${searchParam}`
-  })
+  })()
 );
 export const searchBook = searchParam =>
   respondToSuccess(SearchBookAPI.actionCreator(searchParam));

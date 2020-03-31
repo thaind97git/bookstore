@@ -36,11 +36,6 @@ class MyDocument extends Document {
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-title" content="RevPayment" />
           <meta name="theme-color" content="#fff" />
-
-          <link
-            rel="shortcut icon"
-            href="/static/kosmo/assets/img/icon-16.png"
-          />
           <link
             rel="stylesheet"
             type="text/css"
