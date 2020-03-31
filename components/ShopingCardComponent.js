@@ -13,21 +13,21 @@ import DeleteOutline from '@material-ui/icons/DeleteOutline';
 import { pick } from 'lodash/fp';
 
 import { connect } from 'react-redux';
-import { REMOVE_ITEM } from '../stores/CardState';
+import { REMOVE_ITEM, REMOVE_CARD } from '../stores/CardState';
 import { formatDisplayNumber } from '../utils';
 import RLink from '../layouts/RLink';
 
 const connectToRedux = connect(pick(['shopingCard']), dispatch => ({
-  removeItem: id => dispatch({ type: REMOVE_ITEM, payload: id })
+  removeItem: id => dispatch({ type: REMOVE_ITEM, payload: id }),
+  removeCard: () => dispatch({ type: REMOVE_CARD })
 }));
 
-const ShopingCardComponent = ({ shopingCard = [], removeItem }) => {
+const ShopingCardComponent = ({ shopingCard = [], removeItem, removeCard }) => {
   const totalPrice = shopingCard
     ? shopingCard.reduce((prev, card) => {
         return prev + card.price;
       }, 0)
     : 0;
-  const [basketData, setBasketData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showPaymentButton, setShowPaymentButton] = useState(true);
 
@@ -50,20 +50,20 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem }) => {
                 icon: () => <DeleteOutline />,
                 tooltip: 'Delete Item(s)',
                 onClick: (e, rowData) => {
-                  removeItem(rowData.id);
+                  removeItem(rowData.isbn);
                 }
               },
               {
                 icon: () => <DeleteOutline />,
                 tooltip: 'Delete All Item',
                 onClick: () => {
-                  this.props.basketData.onAllItemsDeleted();
+                  removeCard();
                 },
                 isFreeAction: true
               }
             ]}
             columns={[
-              { title: 'Product', field: 'name' },
+              { title: 'Book', field: 'title' },
               { title: 'Quantity', field: 'quantity', type: 'numeric' },
               { title: 'Price', field: 'price', type: 'currency' }
             ]}
@@ -90,7 +90,7 @@ const ShopingCardComponent = ({ shopingCard = [], removeItem }) => {
         {showPaymentButton && (
           <CardActions style={{ justifyContent: 'flex-end' }}>
             <Typography variant="h4" style={{ margin: '20px 10px 20px 0px' }}>
-              Total: $ {formatDisplayNumber(totalPrice)}
+              Total: $ {Number(formatDisplayNumber(totalPrice)).toFixed(4)}
             </Typography>
             <RLink href="/order">
               <Button

@@ -8,7 +8,7 @@ import {
   AppBar,
   withStyles
 } from '@material-ui/core';
-import { MenuBook, Home, ShoppingCart } from '@material-ui/icons';
+import { MenuBook, Home, ShoppingCart, Details } from '@material-ui/icons';
 import CopyrightComponent from '../components/CopyrightComponent';
 import { withRouter } from 'next/router';
 import { compose } from 'recompose';
@@ -75,6 +75,11 @@ class EmptyPageLayout extends React.Component {
             <ShoppingCart />
           </Badge>
         )
+      },
+      {
+        link: '/order-details',
+        label: 'Order details',
+        icon: <Details />
       }
     ];
     return (

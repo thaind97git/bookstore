@@ -117,6 +117,11 @@ const VerticalBarComponent = ({
       link: '/admin'
     },
     {
+      label: 'Order',
+      icon: <SignalCellularAlt />,
+      link: '/admin/order'
+    },
+    {
       label: 'User',
       icon: <SignalCellularAlt />,
       link: '/admin/user'

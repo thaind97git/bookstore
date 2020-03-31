@@ -1,6 +1,7 @@
 import { makeFetchAction } from 'redux-api-call';
 import nfetch from '../libs/nfetch';
 import { respondToSuccess } from './middlewares/api-reaction';
+import { removeCard } from '../libs/card-libs';
 
 export const GET_ORDERS = 'GET_ORDERS';
 export const SAVE_ORDERS = 'SAVE_ORDERS';
@@ -11,7 +12,7 @@ export const GetOrdersAPI = makeFetchAction(
   ({ pageSize, pageIndex }) =>
     nfetch({
       method: 'GET',
-      endpoint: `/order?pageNumber=${pageIndex}&pageSize=${pageSize}&sortDirection=asc&sortField=id`
+      endpoint: `/order?pageNumber=${pageIndex}&pageSize=${pageSize}&sortDirection=asc`
     })()
 );
 export const getOrders = ({ pageSize, pageIndex }) =>
@@ -23,15 +24,17 @@ export const SaveOrderAPI = makeFetchAction(SAVE_ORDERS, objectBody =>
   })(objectBody)
 );
 export const saveOrder = objectValues =>
-  respondToSuccess(SaveOrderAPI.actionCreator(objectValues));
+  respondToSuccess(SaveOrderAPI.actionCreator(objectValues), () => {
+    removeCard();
+  });
 
 export const SearchOrderByCodeAPI = makeFetchAction(
   SEARCH_ORDER_BY_CODE,
-  code =>
+  ({ code, customerEmail }) =>
     nfetch({
       method: 'GET',
-      endpoint: `/order/${code}`
-    })
+      endpoint: `/order/${code}?customerEmail=${customerEmail}`
+    })()
 );
-export const searchOrderByCode = code =>
-  respondToSuccess(SearchOrderByCodeAPI.actionCreator(code));
+export const searchOrderByCode = ({ code, customerEmail }) =>
+  respondToSuccess(SearchOrderByCodeAPI.actionCreator({ code, customerEmail }));

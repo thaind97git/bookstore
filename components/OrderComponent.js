@@ -1,13 +1,47 @@
-import React, { Fragment } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import { Container, Grid, FormControl, TextField } from '@material-ui/core';
+import React from 'react';
+import {
+  Container,
+  Grid,
+  FormControl,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  makeStyles,
+  Stepper,
+  Step,
+  StepLabel,
+  StepContent,
+  Typography,
+  Button,
+  Paper
+} from '@material-ui/core';
+import { connect } from 'react-redux';
+import { TOAST_ERROR, TOAST_SUCCESS } from '../enums/actions';
+import { createStructuredSelector } from 'reselect';
+import { saveOrder } from '../stores/OrderState';
+import moment from 'moment';
+
+const cardSelector = state => state.shopingCard;
+
+const connectToRedux = connect(
+  createStructuredSelector({
+    yourCard: cardSelector
+  }),
+  dispatch => ({
+    displayToast: (message, type = TOAST_SUCCESS) =>
+      dispatch({
+        type: type,
+        notification: {
+          message
+        }
+      }),
+    createNewOrder: object => dispatch(saveOrder(object))
+  })
+);
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,6 +58,9 @@ const useStyles = makeStyles(theme => ({
   },
   resetContainer: {
     padding: theme.spacing(3)
+  },
+  labelMargin: {
+    marginBottom: 0
   }
 }));
 
@@ -41,72 +78,210 @@ const RenderTextField = props => {
   );
 };
 
-const YourAddress = ({ classes = {} }) => {
+const YourAddress = ({ classes = {}, objectOrder, setObjectOrder }) => {
   return (
     <Grid container>
       <Grid item xs={12}>
         <h4 className={classes.labelMargin}>Your Name</h4>
         <FormControl fullWidth required>
-          <RenderTextField required name="name" />
+          <RenderTextField
+            value={objectOrder.customerName}
+            onChange={event => {
+              const value = event.target.value;
+              setObjectOrder(prev => ({
+                ...prev,
+                customerName: value
+              }));
+            }}
+            required
+            name="name"
+          />
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <h4 className={classes.labelMargin}>Your Address</h4>
         <FormControl fullWidth required>
-          <RenderTextField required name="name" />
+          <RenderTextField
+            value={objectOrder.customerAddress}
+            onChange={event => {
+              const value = event.target.value;
+              setObjectOrder(prev => ({
+                ...prev,
+                customerAddress: value
+              }));
+            }}
+            required
+            name="address"
+          />
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <h4 className={classes.labelMargin}>Your Phone</h4>
         <FormControl fullWidth required>
-          <RenderTextField required name="name" />
+          <RenderTextField
+            value={objectOrder.customerPhoneNumber}
+            onChange={event => {
+              const value = event.target.value;
+              setObjectOrder(prev => ({
+                ...prev,
+                customerPhoneNumber: value
+              }));
+            }}
+            required
+            name="phone"
+          />
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <h4 className={classes.labelMargin}>Your Email</h4>
         <FormControl fullWidth required>
-          <RenderTextField required name="name" />
+          <RenderTextField
+            value={objectOrder.customerEmail}
+            onChange={event => {
+              const value = event.target.value;
+              setObjectOrder(prev => ({
+                ...prev,
+                customerEmail: value
+              }));
+            }}
+            required
+            name="email"
+            type="email"
+          />
         </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <h4 className={classes.labelMargin}>Your Note</h4>
+        <FormControl fullWidth required>
+          <RenderTextField
+            value={objectOrder.note}
+            onChange={event => {
+              const value = event.target.value;
+              setObjectOrder(prev => ({
+                ...prev,
+                note: value
+              }));
+            }}
+            required
+            name="note"
+            type="text"
+          />
+        </FormControl>
+      </Grid>
+    </Grid>
+  );
+};
+const YourPayment = ({ classes = {} }) => {
+  return (
+    <Grid container>
+      <Grid item xs={12}>
+        <h4 className={classes.labelMargin}>Payment</h4>
+        <FormControlLabel
+          control={<Checkbox checked={true} readOnly name="checkedA" />}
+          label="Cash payment on delivery"
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <h4 className={classes.labelMargin}>Form of delivery</h4>
+        <FormControlLabel
+          control={<Checkbox checked={true} readOnly name="checkedA" />}
+          label="Expected delivery in 1 week"
+        />
+      </Grid>
+    </Grid>
+  );
+};
+
+const YourInformation = ({ objectOrder }) => {
+  return (
+    <Grid container>
+      <Grid item xs={12}>
+        <List component="nav" aria-label="main mailbox folders">
+          <ListItem button>
+            <ListItemIcon>Your name:</ListItemIcon>
+            <ListItemText primary={objectOrder.customerName} />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>Your address:</ListItemIcon>
+            <ListItemText primary={objectOrder.customerAddress} />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>Your email:</ListItemIcon>
+            <ListItemText primary={objectOrder.customerEmail} />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>Your phone number:</ListItemIcon>
+            <ListItemText primary={objectOrder.customerPhoneNumber} />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>Your note:</ListItemIcon>
+            <ListItemText primary={objectOrder.note} />
+          </ListItem>
+        </List>
       </Grid>
     </Grid>
   );
 };
 
 function getSteps() {
-  return ['Your Address', 'Payment and Buy', 'Create an ad'];
+  return ['Your Address', 'Payment and Buy', 'Confirm your information'];
 }
 
-function getStepContent(step) {
+function getStepContent({ step, classes, objectOrder, setObjectOrder }) {
   switch (step) {
     case 0:
-      return <YourAddress />;
+      return (
+        <YourAddress
+          classes={classes}
+          objectOrder={objectOrder}
+          setObjectOrder={setObjectOrder}
+        />
+      );
     case 1:
-      return 'An ad group contains one or more ads which target a shared set of keywords.';
+      return (
+        <YourPayment
+          classes={classes}
+          objectOrder={objectOrder}
+          setObjectOrder={setObjectOrder}
+        />
+      );
     case 2:
-      return `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`;
+      return <YourInformation objectOrder={objectOrder} />;
     default:
       return 'Unknown step';
   }
 }
 
-export default function OrderComponent() {
+function OrderComponent({ displayToast, yourCard, createNewOrder }) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+  const [objectOrder, setObjectOrder] = React.useState({
+    customerName: '',
+    customerEmail: '',
+    customerPhoneNumber: '',
+    customerAddress: '',
+    items: [],
+    orderDate: '',
+    note: ''
+  });
   const steps = getSteps();
 
   const handleNext = () => {
+    if (
+      activeStep === 0 &&
+      (!objectOrder.customerName ||
+        !objectOrder.customerPhoneNumber ||
+        !objectOrder.customerEmail ||
+        !objectOrder.customerAddress)
+    ) {
+      displayToast('Please input full your information!', TOAST_ERROR);
+      return;
+    }
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
   const handleBack = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
   };
 
   return (
@@ -116,7 +291,14 @@ export default function OrderComponent() {
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <StepContent>
-              <Typography>{getStepContent(index)}</Typography>
+              <Typography>
+                {getStepContent({
+                  step: index,
+                  classes,
+                  objectOrder,
+                  setObjectOrder
+                })}
+              </Typography>
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -143,11 +325,30 @@ export default function OrderComponent() {
       {activeStep === steps.length && (
         <Paper square elevation={0} className={classes.resetContainer}>
           <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={handleReset} className={classes.button}>
-            Reset
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              const cardItems = yourCard.map(card => ({
+                isbn: card.isbn,
+                quantity: card.quantity,
+                note: ''
+              }));
+              const objectRequest = { ...objectOrder };
+              objectRequest.items = cardItems;
+              objectRequest.orderDate = moment(new Date()).format(
+                'YYYY-MM-DDTHH:mm:ss'
+              );
+              createNewOrder(objectRequest);
+            }}
+            className={classes.button}
+          >
+            Click here to Order
           </Button>
         </Paper>
       )}
     </Container>
   );
 }
+
+export default connectToRedux(OrderComponent);

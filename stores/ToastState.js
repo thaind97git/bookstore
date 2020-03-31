@@ -3,6 +3,7 @@ import { ACTIONS } from 'redux-api-call';
 import { LOGIN_ADMIN, DELETE_USER } from './UserState';
 import { ADD_TO_CARD, REMOVE_ITEM } from './CardState';
 import { SAVE_BOOK, DELETE_BOOK } from './BookState';
+import { SAVE_ORDERS } from './OrderState';
 import { DEFAULT_OPTION_TOAST } from '../utils/options';
 import {
   TOAST_ERROR,
@@ -67,6 +68,9 @@ export default {
         case DELETE_BOOK:
           msgNotify = 'Delete success';
           break;
+        case SAVE_ORDERS:
+          msgNotify = 'Your order is successful';
+          break;
         default:
           break;
       }
@@ -100,6 +104,9 @@ export default {
           break;
         case DELETE_BOOK:
           msgNotify = 'Delete fail';
+          break;
+        case SAVE_ORDERS:
+          msgNotify = 'Your order is successful';
           break;
         default:
           break;
