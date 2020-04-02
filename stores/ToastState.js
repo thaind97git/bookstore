@@ -66,7 +66,8 @@ export default {
           msgNotify = 'Delete success';
           break;
         case SAVE_ORDERS:
-          msgNotify = 'Your order is successful';
+          msgNotify =
+            'Your order is successful! Please check email to see your order code!';
           break;
         default:
           break;
@@ -100,7 +101,7 @@ export default {
           msgNotify = 'Delete fail';
           break;
         case SAVE_ORDERS:
-          msgNotify = 'Your order is successful';
+          msgNotify = 'Your order is fail';
           break;
         default:
           break;

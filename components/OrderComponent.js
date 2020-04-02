@@ -17,13 +17,19 @@ import {
   StepContent,
   Typography,
   Button,
-  Paper
+  Paper,
+  CardActions,
+  Card,
+  CardContent,
+  Link
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { TOAST_ERROR, TOAST_SUCCESS } from '../enums/actions';
 import { createStructuredSelector } from 'reselect';
 import { saveOrder } from '../stores/OrderState';
 import moment from 'moment';
+import MaterialTable from 'material-table';
+import { formatDisplayNumber } from '../utils';
 
 const cardSelector = state => state.shopingCart;
 
@@ -192,31 +198,100 @@ const YourPayment = ({ classes = {} }) => {
   );
 };
 
-const YourInformation = ({ objectOrder }) => {
+const YourInformation = ({ objectOrder, cartItems }) => {
+  const totalPrice = cartItems
+    ? cartItems.reduce((prev, item) => {
+        return prev + item.price * item.quantity;
+      }, 0)
+    : 0;
+  console.log({ cartItems });
   return (
     <Grid container>
       <Grid item xs={12}>
         <List component="nav" aria-label="main mailbox folders">
           <ListItem button>
             <ListItemIcon>Your name:</ListItemIcon>
-            <ListItemText primary={objectOrder.customerName} />
+            <ListItemText
+              style={{ padding: '0 16px' }}
+              primary={objectOrder.customerName}
+            />
           </ListItem>
           <ListItem button>
             <ListItemIcon>Your address:</ListItemIcon>
-            <ListItemText primary={objectOrder.customerAddress} />
+            <ListItemText
+              style={{ padding: '0 16px' }}
+              primary={objectOrder.customerAddress}
+            />
           </ListItem>
           <ListItem button>
             <ListItemIcon>Your email:</ListItemIcon>
-            <ListItemText primary={objectOrder.customerEmail} />
+            <ListItemText
+              style={{ padding: '0 16px' }}
+              primary={objectOrder.customerEmail}
+            />
           </ListItem>
           <ListItem button>
             <ListItemIcon>Your phone number:</ListItemIcon>
-            <ListItemText primary={objectOrder.customerPhoneNumber} />
+            <ListItemText
+              style={{ padding: '0 16px' }}
+              primary={objectOrder.customerPhoneNumber}
+            />
           </ListItem>
           <ListItem button>
             <ListItemIcon>Your note:</ListItemIcon>
-            <ListItemText primary={objectOrder.note} />
+            <ListItemText
+              style={{ padding: '0 16px' }}
+              primary={objectOrder.note}
+            />
           </ListItem>
+          <Card elevation={0}>
+            <CardContent style={{ padding: 0 }}>
+              <MaterialTable
+                components={{
+                  Container: props => <Paper {...props} elevation={0} />
+                }}
+                isLoading={false}
+                title="Order's Items"
+                data={cartItems || []}
+                columns={[
+                  {
+                    title: 'Book',
+                    field: 'isbn',
+                    render: row => (
+                      <Link href={`/book-details?isbn=${row.isbn}`}>
+                        <a target="__blank">{row.isbn}</a>
+                      </Link>
+                    )
+                  },
+                  { title: 'Quantity', field: 'quantity', type: 'numeric' },
+                  {
+                    title: 'Price',
+                    field: 'price',
+                    type: 'currency'
+                  }
+                ]}
+                options={{
+                  actionsColumnIndex: -1,
+                  emptyRowsWhenPaging: false,
+                  paging: false,
+                  search: false
+                }}
+                localization={{
+                  body: {
+                    emptyDataSourceMessage: 'No item in your cart'
+                  },
+                  header: {
+                    actions: ''
+                  }
+                }}
+              />
+            </CardContent>
+            <CardActions style={{ justifyContent: 'flex-end' }}>
+              <Typography variant="h4" style={{ margin: '20px 10px 20px 0px' }}>
+                Total: $ {Number(formatDisplayNumber(totalPrice)).toFixed(4)}
+              </Typography>
+            </CardActions>
+          </Card>
         </List>
       </Grid>
     </Grid>
@@ -227,7 +302,13 @@ function getSteps() {
   return ['Your Address', 'Payment and Buy', 'Confirm your information'];
 }
 
-function getStepContent({ step, classes, objectOrder, setObjectOrder }) {
+function getStepContent({
+  step,
+  classes,
+  objectOrder,
+  setObjectOrder,
+  cartItems
+}) {
   switch (step) {
     case 0:
       return (
@@ -246,13 +327,21 @@ function getStepContent({ step, classes, objectOrder, setObjectOrder }) {
         />
       );
     case 2:
-      return <YourInformation objectOrder={objectOrder} />;
+      return (
+        <YourInformation cartItems={cartItems} objectOrder={objectOrder} />
+      );
     default:
       return 'Unknown step';
   }
 }
 
 function OrderComponent({ displayToast, yourCard, createNewOrder }) {
+  const cartItemsForInfo = (yourCard || []).map(cart => ({
+    isbn: cart.isbn,
+    quantity: cart.quantity,
+    note: '',
+    price: cart.price
+  }));
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [objectOrder, setObjectOrder] = React.useState({
@@ -291,14 +380,13 @@ function OrderComponent({ displayToast, yourCard, createNewOrder }) {
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <StepContent>
-              <Typography>
-                {getStepContent({
-                  step: index,
-                  classes,
-                  objectOrder,
-                  setObjectOrder
-                })}
-              </Typography>
+              {getStepContent({
+                step: index,
+                classes,
+                objectOrder,
+                setObjectOrder,
+                cartItems: cartItemsForInfo
+              })}
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -329,13 +417,13 @@ function OrderComponent({ displayToast, yourCard, createNewOrder }) {
             variant="contained"
             color="primary"
             onClick={() => {
-              const cardItems = yourCard.map(card => ({
-                isbn: card.isbn,
-                quantity: card.quantity,
+              const cartItems = (yourCard || []).map(cart => ({
+                isbn: cart.isbn,
+                quantity: cart.quantity,
                 note: ''
               }));
               const objectRequest = { ...objectOrder };
-              objectRequest.items = cardItems;
+              objectRequest.items = cartItems;
               objectRequest.orderDate = moment(new Date()).format(
                 'YYYY-MM-DDTHH:mm:ss'
               );

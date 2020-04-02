@@ -32,12 +32,20 @@ const ShopingCartComponent = ({ shopingCart = [], removeItem, removeCard }) => {
 
   const tableRef = createRef();
   const [isFetchCart, setIsFetchCart] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   useEffect(() => {
     if (isFetchCart) {
       tableRef.current && tableRef.current.onQueryChange();
       setIsFetchCart(false);
     }
   }, [isFetchCart, setIsFetchCart, tableRef]);
+  useEffect(() => {
+    if (shopingCart.length) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [shopingCart]);
   return (
     <Container style={{ minHeight: '80vh', marginTop: 30 }}>
       <Card elevation={0}>
@@ -97,7 +105,7 @@ const ShopingCartComponent = ({ shopingCart = [], removeItem, removeCard }) => {
             Total: $ {Number(formatDisplayNumber(totalPrice)).toFixed(4)}
           </Typography>
           <Button
-            disabled={shopingCart.length ? false : true}
+            disabled={isDisabled}
             variant="outlined"
             color="primary"
             style={{ textTransform: 'none' }}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Typography,
@@ -18,7 +18,8 @@ import { TOAST_ERROR, TOAST_SUCCESS } from '../enums/actions';
 
 const connectToRedux = connect(
   createStructuredSelector({
-    orderDetailsData: SearchOrderByCodeAPI.dataSelector
+    orderDetailsData: SearchOrderByCodeAPI.dataSelector,
+    orderDetailsError: SearchOrderByCodeAPI.errorSelector
   }),
   dispatch => ({
     searchOrderByCode: ({ code, customerEmail }) =>
@@ -77,11 +78,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function HomeComponent({ orderDetailsData, searchOrderByCode, displayToast }) {
+function HomeComponent({
+  orderDetailsData,
+  searchOrderByCode,
+  displayToast,
+  orderDetailsError
+}) {
   const classes = useStyles();
   const [search, setSearch] = useState('');
   const [email, setEmail] = useState('');
-
+  const [isSearch, setIsSearch] = useState(false);
   return (
     <div style={{ minHeight: '80vh' }}>
       <div className={classes.heroContent}>
@@ -112,11 +118,13 @@ function HomeComponent({ orderDetailsData, searchOrderByCode, displayToast }) {
                 <Paper
                   onSubmit={event => {
                     event.preventDefault();
+                    setIsSearch(false);
                     if (!search) return;
                     if (!email) {
                       displayToast('Please input your email!', TOAST_ERROR);
                       return;
                     }
+                    setIsSearch(true);
                     searchOrderByCode({
                       code: search,
                       customerEmail: email
@@ -150,8 +158,16 @@ function HomeComponent({ orderDetailsData, searchOrderByCode, displayToast }) {
         </Container>
         <Container style={{ paddingTop: 40, paddingBottom: 40 }}>
           <div>
-            {orderDetailsData && (
+            {!isSearch ? (
+              <Grid />
+            ) : !orderDetailsError && orderDetailsData ? (
               <CardOrderDetailsComponent orderDetails={orderDetailsData} />
+            ) : (
+              <Grid justify="center" alignItems="center" container>
+                <Grid style={{ fontSize: 50, opacity: 0.4, color: 'white' }}>
+                  Not found any order!
+                </Grid>
+              </Grid>
             )}
           </div>
         </Container>

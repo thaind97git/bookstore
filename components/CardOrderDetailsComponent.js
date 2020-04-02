@@ -8,7 +8,8 @@ import {
   Paper,
   Divider,
   CardActions,
-  Typography
+  Typography,
+  Button
 } from '@material-ui/core';
 import moment from 'moment';
 import MaterialTable from 'material-table';
@@ -30,7 +31,37 @@ const RenderTextField = props => {
   );
 };
 
+const getButtonStyleByStatus = status => {
+  switch (status) {
+    case 1:
+      return (
+        <Button variant="contained" color="secondary">
+          Waiting
+        </Button>
+      );
+    case 2:
+      return (
+        <Button variant="contained" color="primary">
+          Processed
+        </Button>
+      );
+    case 3:
+      return (
+        <Button
+          variant="contained"
+          style={{ background: '#4caf50', color: 'white' }}
+        >
+          Completed
+        </Button>
+      );
+
+    default:
+      break;
+  }
+};
+
 const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
+  orderDetails = orderDetails || {};
   const { items = [] } = orderDetails;
   const totalPrice = items
     ? items.reduce((prev, item) => {
@@ -102,12 +133,7 @@ const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <RenderTextField
-                disabled
-                label="Status"
-                inputProps={{ readOnly: true }}
-                value={orderDetails.status}
-              />
+              Status: {getButtonStyleByStatus(orderDetails.status)}
             </Grid>
             <Grid item xs={12}>
               <Card elevation={0}>
