@@ -59,11 +59,11 @@ class EmptyPageLayout extends React.Component {
         label: 'Home',
         icon: <Home />
       },
-      {
-        link: '/details',
-        label: 'Categories',
-        icon: <MenuBook />
-      },
+      // {
+      //   link: '/details',
+      //   label: 'Categories',
+      //   icon: <MenuBook />
+      // },
       {
         link: '/shoping-card',
         label: 'Card',

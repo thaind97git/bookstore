@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef, useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import RLink from '../layouts/RLink';
 import Router from 'next/router';
 
 const connectToRedux = connect(pick(['shopingCart']), dispatch => ({
-  removeItem: id => dispatch({ type: REMOVE_ITEM, payload: id }),
+  removeItem: isbn => dispatch({ type: REMOVE_ITEM, payload: isbn }),
   removeCard: () => dispatch({ type: REMOVE_CART })
 }));
 
@@ -29,23 +29,36 @@ const ShopingCartComponent = ({ shopingCart = [], removeItem, removeCard }) => {
         return prev + card.price;
       }, 0)
     : 0;
+
+  const tableRef = createRef();
+  const [isFetchCart, setIsFetchCart] = useState(false);
+  useEffect(() => {
+    if (isFetchCart) {
+      tableRef.current && tableRef.current.onQueryChange();
+      setIsFetchCart(false);
+    }
+  }, [isFetchCart, setIsFetchCart, tableRef]);
   return (
     <Container style={{ minHeight: '80vh', marginTop: 30 }}>
       <Card elevation={0}>
         <CardContent style={{ padding: 0 }}>
           <MaterialTable
+            tableRef={tableRef}
             isLoading={false}
             components={{
               Container: props => <Paper {...props} elevation={0} />
             }}
             title="Shopping Cart"
-            data={shopingCart || []}
+            data={() =>
+              new Promise(resolve => resolve({ data: shopingCart || [] }))
+            }
             actions={[
               {
                 icon: () => <DeleteOutline />,
                 tooltip: 'Delete Item(s)',
                 onClick: (e, rowData) => {
                   removeItem(rowData.isbn);
+                  setIsFetchCart(true);
                 }
               },
               {
@@ -53,13 +66,14 @@ const ShopingCartComponent = ({ shopingCart = [], removeItem, removeCard }) => {
                 tooltip: 'Delete All Item',
                 onClick: () => {
                   removeCard();
+                  setIsFetchCart(true);
                 },
                 isFreeAction: true
               }
             ]}
             columns={[
-              { title: 'Quantity', field: 'quantity', type: 'numeric' },
               { title: 'Book', field: 'title' },
+              { title: 'Quantity', field: 'quantity', type: 'numeric' },
               { title: 'Price', field: 'price', type: 'currency' }
             ]}
             options={{

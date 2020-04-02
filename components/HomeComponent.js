@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Button,
   Grid,
   Typography,
   makeStyles,
@@ -131,7 +130,7 @@ function HomeComponent({
   };
 
   let { content = [], totalElements = 0 } = booksData || {};
-  if (isSearch && searchBookData && searchBookData.length) {
+  if (isSearch && searchBookData) {
     content = searchBookData;
     totalElements = searchBookData.length;
   }
@@ -227,7 +226,11 @@ function HomeComponent({
       <Container className={classes.cardGrid} maxWidth="md">
         <Grid container spacing={4}>
           {!content.length ? (
-            <h1 className={classes.notFoundBook}>Not found any book</h1>
+            <Grid justify="center" alignItems="center" container>
+              <Grid style={{ fontSize: 50, opacity: 0.4 }}>
+                Not found any book!
+              </Grid>
+            </Grid>
           ) : (
             content.map((book, index) => (
               <Grid item key={index} xs={12} sm={6} md={4}>

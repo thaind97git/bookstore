@@ -6,10 +6,14 @@ import {
   CardContent,
   Card,
   Paper,
-  Divider
+  Divider,
+  CardActions,
+  Typography
 } from '@material-ui/core';
 import moment from 'moment';
 import MaterialTable from 'material-table';
+import Link from 'next/link';
+import { formatDisplayNumber } from '../utils';
 
 const RenderTextField = props => {
   return (
@@ -27,6 +31,12 @@ const RenderTextField = props => {
 };
 
 const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
+  const { items = [] } = orderDetails;
+  const totalPrice = items
+    ? items.reduce((prev, item) => {
+        return prev + item.priceByOrder * item.quantity;
+      }, 0)
+    : 0;
   return (
     <CardSimpleLayout
       header={<b>Your order details</b>}
@@ -110,9 +120,28 @@ const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
                     title="Order's Items"
                     data={orderDetails.items || []}
                     columns={[
-                      { title: 'Book', field: 'title' },
+                      {
+                        title: 'Book',
+                        field: 'isbn',
+                        render: row => (
+                          <Link href={`/book-details?isbn=${row.isbn}`}>
+                            <a target="__blank">{row.isbn}</a>
+                          </Link>
+                        )
+                      },
                       { title: 'Quantity', field: 'quantity', type: 'numeric' },
-                      { title: 'Price', field: 'price', type: 'currency' }
+                      {
+                        title: 'Price By Order',
+                        field: 'priceByOrder',
+                        type: 'currency'
+                      },
+                      {
+                        title: 'Total Price',
+                        field: '',
+                        type: 'currency',
+                        render: row =>
+                          `$ ${Number(row.quantity) * Number(row.priceByOrder)}`
+                      }
                     ]}
                     options={{
                       actionsColumnIndex: -1,
@@ -130,6 +159,15 @@ const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
                     }}
                   />
                 </CardContent>
+                <CardActions style={{ justifyContent: 'flex-end' }}>
+                  <Typography
+                    variant="h4"
+                    style={{ margin: '20px 10px 20px 0px' }}
+                  >
+                    Total: ${' '}
+                    {Number(formatDisplayNumber(totalPrice)).toFixed(4)}
+                  </Typography>
+                </CardActions>
               </Card>
             </Grid>
           </Grid>

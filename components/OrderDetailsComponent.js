@@ -129,9 +129,9 @@ function HomeComponent({ orderDetailsData, searchOrderByCode, displayToast }) {
                     value={search}
                     onChange={event => setSearch(event.target.value)}
                     className={classes.input}
-                    placeholder="Search order details by code"
+                    placeholder="Enter your order code"
                     inputProps={{
-                      'aria-label': 'Search order details by code'
+                      'aria-label': 'Enter your order code'
                     }}
                   />
 

@@ -77,11 +77,15 @@ const CardBookComponent = ({ book, addToCart, shopingCart = [] }) => {
           setDialog(false);
         }}
         onOk={() => {
-          if (Number(shopingCart.length) + Number(quantity) > 15) {
+          const quantityAdded = (shopingCart || []).reduce((prev, current) => {
+            return prev + current.quantity;
+          }, 0);
+          if (Number(quantityAdded) + Number(quantity) > 15) {
             setError('Sorry, you just can buy 15 items in a order!');
             return;
           }
           setError('');
+          setQuantity('');
           typeof addToCart === 'function' && addToCart({ book, quantity });
           setDialog(false);
         }}
@@ -90,7 +94,7 @@ const CardBookComponent = ({ book, addToCart, shopingCart = [] }) => {
         <CardHeader
           action={
             <Tooltip title="View more" aria-label="add">
-              <RLink href={`/details?id=${book.id}`}>
+              <RLink href={`/details?isbn=${book.isbn}`}>
                 <IconButton aria-label="settings">
                   <NavigateNext />
                 </IconButton>
