@@ -171,26 +171,26 @@ const EditBookComponent = ({
     const newImage = document.getElementById('image-button-file').files[0];
 
     if (newImage) {
-      requestObject.coverPicture = newImage;
+      objectValues.coverPicture = newImage;
     }
 
-    requestObject.book = {
-      title: objectValues.title,
-      author: objectValues.author,
-      publisher: objectValues.publisher,
-      price: objectValues.value,
-      categoryId: objectValues.categoryId,
-      description: objectValues.description,
-      firstReleased: objectValues.firstReleased
-    };
-    requestObject.isbn = objectValues.isbn;
+    // requestObject.book = {
+    //   title: objectValues.title,
+    //   author: objectValues.author,
+    //   publisher: objectValues.publisher,
+    //   price: objectValues.value,
+    //   categoryId: objectValues.categoryId,
+    //   description: objectValues.description,
+    //   firstReleased: objectValues.firstReleased
+    // };
+    // requestObject.isbn = objectValues.isbn;
 
     const formData = new FormData();
-    for (let key in requestObject) {
-      if (typeof requestObject[key] === 'object') {
-        requestObject[key] = JSON.stringify(requestObject[key]);
+    for (let key in objectValues) {
+      if (typeof objectValues[key] === 'object') {
+        objectValues[key] = JSON.stringify(objectValues[key]);
       }
-      formData.append(key, requestObject[key]);
+      formData.append(key, objectValues[key]);
     }
 
     var myHeaders = new Headers();

@@ -18,9 +18,18 @@ import DialogComponent from './commons/DialogComponent';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import { pick } from 'lodash/fp';
+import { TOAST_ERROR, TOAST_SUCCESS } from '../enums/actions';
 
-const connectToRedux = connect(pick(['shopingCart']));
-const useStyles = makeStyles(theme => ({
+const connectToRedux = connect(pick(['shopingCart']), (dispatch) => ({
+  displayToast: (message, type = TOAST_SUCCESS) =>
+    dispatch({
+      type: type,
+      notification: {
+        message
+      }
+    })
+}));
+const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: '100%' // 16:9
@@ -45,7 +54,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const CardBookComponent = ({ book, addToCart, shopingCart = [] }) => {
+const CardBookComponent = ({
+  book,
+  addToCart,
+  shopingCart = [],
+  displayToast
+}) => {
   const classes = useStyles();
 
   const [quantity, setQuantity] = useState('');
@@ -63,7 +77,7 @@ const CardBookComponent = ({ book, addToCart, shopingCart = [] }) => {
               min: 0
             }}
             value={quantity}
-            onChange={event => setQuantity(event.target.value)}
+            onChange={(event) => setQuantity(event.target.value)}
             type="number"
             label="Quantity"
             id="outlined-start-adornment"
@@ -77,6 +91,10 @@ const CardBookComponent = ({ book, addToCart, shopingCart = [] }) => {
           setDialog(false);
         }}
         onOk={() => {
+          if (!quantity) {
+            displayToast('Please input quantity', TOAST_ERROR);
+            return;
+          }
           const quantityAdded = (shopingCart || []).reduce((prev, current) => {
             return prev + current.quantity;
           }, 0);

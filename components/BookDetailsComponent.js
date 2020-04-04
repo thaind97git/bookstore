@@ -7,7 +7,9 @@ import {
   Divider,
   ExpansionPanel,
   ExpansionPanelSummary,
-  ExpansionPanelDetails
+  ExpansionPanelDetails,
+  TextField,
+  Button
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
@@ -15,16 +17,31 @@ import { createStructuredSelector } from 'reselect';
 import { GetBookDetailsAPI, getBookDetails } from '../stores/BookState';
 import { ExpandMore } from '@material-ui/icons';
 import moment from 'moment';
+import DialogComponent from './commons/DialogComponent';
+import clsx from 'clsx';
+import { get } from 'lodash/fp';
+import { ADD_TO_CART } from '../stores/CartState';
+import { TOAST_ERROR, TOAST_SUCCESS } from '../enums/actions';
 
 const connectToRedux = connect(
   createStructuredSelector({
-    bookDetailsData: GetBookDetailsAPI.dataSelector
+    bookDetailsData: GetBookDetailsAPI.dataSelector,
+    shopingCart: get('shopingCart')
   }),
-  dispatch => ({
-    getBookDetails: isbn => dispatch(getBookDetails(isbn))
+  (dispatch) => ({
+    getBookDetails: (isbn) => dispatch(getBookDetails(isbn)),
+    addToCart: ({ book, quantity }) =>
+      dispatch({ type: ADD_TO_CART, payload: { book, quantity } }),
+    displayToast: (message, type = TOAST_SUCCESS) =>
+      dispatch({
+        type: type,
+        notification: {
+          message
+        }
+      })
   })
 );
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   detailsSection: {
     marginTop: theme.spacing(6),
     paddingBottom: theme.spacing(6),
@@ -53,10 +70,19 @@ const useStyles = makeStyles(theme => ({
     width: '25ch'
   }
 }));
-const BookDetailsComponent = ({ getBookDetails, bookDetailsData }) => {
+const BookDetailsComponent = ({
+  getBookDetails,
+  bookDetailsData,
+  shopingCart = [],
+  addToCart,
+  displayToast
+}) => {
   const router = useRouter();
   const [isFetch, setIsFetch] = useState(true);
   const classes = useStyles();
+  const [quantity, setQuantity] = useState('');
+  const [dialog, setDialog] = useState(false);
+  const [error, setError] = useState('');
   useEffect(() => {
     if (isFetch) {
       const { isbn } = router.query || {};
@@ -78,6 +104,48 @@ const BookDetailsComponent = ({ getBookDetails, bookDetailsData }) => {
   }
   return (
     <Container className={classes.detailsSection}>
+      <DialogComponent
+        size="xs"
+        isOpenDialog={dialog}
+        setIsOpenDialog={setDialog}
+        content={
+          <TextField
+            inputProps={{
+              min: 0
+            }}
+            value={quantity}
+            onChange={(event) => setQuantity(event.target.value)}
+            type="number"
+            label="Quantity"
+            id="outlined-start-adornment"
+            className={clsx(classes.margin, classes.textField)}
+            variant="outlined"
+            helperText={error}
+            error={error ? true : false}
+          />
+        }
+        onCancel={() => {
+          setDialog(false);
+        }}
+        onOk={() => {
+          if (!quantity) {
+            displayToast('Please input quantity', TOAST_ERROR);
+            return;
+          }
+          const quantityAdded = (shopingCart || []).reduce((prev, current) => {
+            return prev + current.quantity;
+          }, 0);
+          if (Number(quantityAdded) + Number(quantity) > 15) {
+            setError('Sorry, you just can buy 15 items in a order!');
+            return;
+          }
+          setError('');
+          setQuantity('');
+          typeof addToCart === 'function' &&
+            addToCart({ book: bookDetailsData, quantity });
+          setDialog(false);
+        }}
+      />
       <Grid container>
         <Grid item sm={12} md={4}>
           <img
@@ -127,6 +195,14 @@ const BookDetailsComponent = ({ getBookDetails, bookDetailsData }) => {
           <Typography variant="h4" style={{ margin: '20px 10px 20px 0px' }}>
             Price: $ {bookDetailsData.price}
           </Typography>
+          <Button
+            style={{ margin: '10px 0px' }}
+            onClick={() => setDialog(true)}
+            variant="contained"
+            color="primary"
+          >
+            Add To Cart
+          </Button>
           <ExpansionPanel style={{ background: 'transparent' }}>
             <ExpansionPanelSummary
               expandIcon={<ExpandMore />}
