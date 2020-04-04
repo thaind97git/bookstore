@@ -14,7 +14,7 @@ import {
 import RLink from '../layouts/RLink';
 import { formatDisplayNumber, getShortString } from '../utils';
 import { GetAllCategoriesAPI, getAllCategories } from '../stores/CategoryState';
-import { UnfoldMore } from '@material-ui/icons';
+import { Edit } from '@material-ui/icons';
 
 const ISBN_DOMAIN = process.env.ISBN_DOMAIN || 'https://isbnsearch.org/isbn';
 
@@ -24,11 +24,11 @@ const connectToRedux = connect(
     allCategoryData: GetAllCategoriesAPI.dataSelector,
     deleteBookData: DeleteBookAPI.dataSelector
   }),
-  dispatch => ({
+  (dispatch) => ({
     getBooks: ({ pageSize, pageIndex }) =>
       dispatch(getBooks({ pageIndex, pageSize })),
     getAllCategories: () => dispatch(getAllCategories()),
-    deleteBook: id => dispatch(deleteBook(id))
+    deleteBook: (isbn) => dispatch(deleteBook(isbn))
   })
 );
 
@@ -68,9 +68,9 @@ const renderData = ({
   setIdDeleted,
   categories = []
 }) =>
-  data.map(item => {
+  data.map((item) => {
     const currentCategory =
-      categories.find(cate => cate.id === item.categoryId) || {};
+      categories.find((cate) => cate.id === item.categoryId) || {};
     return {
       isbn: (
         <a
@@ -96,11 +96,13 @@ const renderData = ({
       category: currentCategory.name || item.categoryId,
       actions: (
         <Fragment>
-          <Tooltip title="View details">
-            <IconButton onClick={() => {}}>
-              <UnfoldMore />
-            </IconButton>
-          </Tooltip>
+          <RLink href={`/admin/book/edit?isbn=${item.isbn}`}>
+            <Tooltip title="Edit">
+              <IconButton>
+                <Edit />
+              </IconButton>
+            </Tooltip>
+          </RLink>{' '}
           <Button
             size="small"
             variant="contained"
@@ -122,7 +124,6 @@ export const BookManagementComponent = ({
   getBooks,
   bookData,
   deleteBook,
-  deleteBookData,
   getAllCategories,
   allCategoryData
 }) => {

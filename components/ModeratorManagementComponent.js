@@ -9,20 +9,21 @@ import StatusComponent from './StatusComponent';
 import RoleComponent from './RoleComponent';
 import DialogComponent from './commons/DialogComponent';
 import { deleteUser, DeleteUserAPI } from '../stores/UserState';
+import RLink from '../layouts/RLink';
 
 const connectToRedux = connect(
   createStructuredSelector({
     moderatorData: GetAllModeratorAPI.dataSelector,
     deleteUserData: DeleteUserAPI.dataSelector
   }),
-  dispatch => ({
+  (dispatch) => ({
     getAllModerator: ({ pageSize, pageIndex }) =>
       dispatch(getAllModerator({ pageIndex, pageSize })),
-    deleteUser: id => dispatch(deleteUser(id))
+    deleteUser: (id) => dispatch(deleteUser(id))
   })
 );
 
-const RenderTextField = props => {
+const RenderTextField = (props) => {
   return (
     <TextField
       {...props}
@@ -61,7 +62,7 @@ const HEADERS = [
 ];
 
 const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
-  data.map(item => ({
+  data.map((item) => ({
     fullName: item.fullName,
     username: item.username,
     role: <RoleComponent type={item.role} />,
@@ -85,7 +86,8 @@ const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
 export const ModeratorManagementComponent = ({
   getAllModerator,
   moderatorData,
-  deleteUserData
+  deleteUserData,
+  deleteUser
 }) => {
   const [isFetch, setIsFetch] = useState(true);
   const [pageSize, setPageSize] = useState(5);
@@ -121,6 +123,7 @@ export const ModeratorManagementComponent = ({
           setDialogDelete(false);
         }}
         onOk={() => {
+          console.log({ idDeleted });
           deleteUser(idDeleted);
           deleteUserData && setIsFetch(true);
           setDialogDelete(false);
@@ -184,7 +187,21 @@ export const ModeratorManagementComponent = ({
       /> */}
 
       <CardSimpleLayout
-        header={<h2>Moderator Management</h2>}
+        header={
+          <Grid container justify="space-between">
+            <span>Moderator Management</span>
+            <RLink href="/admin/moderator/add-new">
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                disableElevation
+              >
+                Add New Moderator
+              </Button>
+            </RLink>
+          </Grid>
+        }
         body={
           <TablePaginationComponent
             totalCount={totalElements}

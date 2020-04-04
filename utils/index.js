@@ -3,7 +3,7 @@ import brn from 'brn';
 
 export const isServer = !process.browser;
 
-export const createErrorSelector = action =>
+export const createErrorSelector = (action) =>
   flow(
     brn(action.errorSelector, action.errorSelector, action.dataSelector),
     get('error')
@@ -15,7 +15,7 @@ export const doFunctionWithEnter = (event, func) =>
   typeof func === 'function' &&
   func();
 
-export const parseBoolean = val =>
+export const parseBoolean = (val) =>
   !val || val === 'false' || val === 'null' || val === 'undefined'
     ? false
     : true;
@@ -29,7 +29,7 @@ export const getObjectValuesFormWithEvent = (arrName = [], event) => {
 
 export const parseTextToFloat = flow(replace(/,/g, ''), parseFloat);
 
-export const formatDisplayNumber = number => {
+export const formatDisplayNumber = (number) => {
   if (typeof number === 'string') {
     number = parseTextToFloat(number);
   }
@@ -58,7 +58,7 @@ function getExtension(filename) {
   return parts[parts.length - 1];
 }
 
-export const isImage = filename => {
+export const isImage = (filename) => {
   var ext = getExtension(filename);
   switch (ext.toLowerCase()) {
     case 'jpg':
@@ -69,3 +69,11 @@ export const isImage = filename => {
       return false;
   }
 };
+
+export function toDataURL(file, callback) {
+  var reader = new FileReader();
+  reader.onloadend = function () {
+    callback(reader.result);
+  };
+  reader.readAsDataURL(file);
+}

@@ -24,16 +24,18 @@ import {
   searchOrderByCode,
   SearchOrderByCodeAPI
 } from '../stores/OrderState';
+import Link from 'next/link';
+import OrderStatusComponent from './OrderStatusComponent';
 
 const connectToRedux = connect(
   createStructuredSelector({
     orderData: GetOrdersAPI.dataSelector,
     orderDetailsData: SearchOrderByCodeAPI.dataSelector
   }),
-  dispatch => ({
+  (dispatch) => ({
     getOrders: ({ pageSize, pageIndex }) =>
       dispatch(getOrders({ pageIndex, pageSize })),
-    getOrderByCode: code => dispatch(searchOrderByCode(code))
+    getOrderByCode: (code) => dispatch(searchOrderByCode(code))
   })
 );
 
@@ -68,7 +70,7 @@ const HEADERS = [
   }
 ];
 const renderData = ({ data = [], setDialogItems, setItemSelected }) =>
-  data.map(item => {
+  data.map((item) => {
     return {
       name: item.customerName,
       email: <div>{item.customerEmail}</div>,
@@ -95,7 +97,7 @@ const renderData = ({ data = [], setDialogItems, setItemSelected }) =>
           <div>{getShortString(item.note)}</div>
         </Tooltip>
       ),
-      actions: item.status
+      actions: <OrderStatusComponent status={item.status} />
     };
   });
 
@@ -143,15 +145,10 @@ export const OrderManagementComponent = ({
         isOpenDialog={dialogItems}
         setIsOpenDialog={setDialogItems}
         title="Items details"
-        onCancel={() => {
-          setDialogItems(false);
-        }}
-        onOk={() => {
-          setDialogItems(false);
-        }}
+        isFooter={false}
         content={
           <List component="nav" aria-label="main mailbox folders">
-            {itemSelected.map(item => (
+            {itemSelected.map((item) => (
               <Fragment>
                 <ListItem button>
                   <ListItemIcon>
@@ -161,9 +158,12 @@ export const OrderManagementComponent = ({
                     primary={
                       <div>
                         <span style={{ marginRight: 200 }}>
-                          {item.quantity} x Nha gia kim
+                          SL: {item.quantity} x{' '}
+                          <Link href={`/book-details?isbn=${item.isbn}`}>
+                            <a target="_blank">{item.isbn}</a>
+                          </Link>
                         </span>{' '}
-                        <span>$41</span>
+                        <span>$ {item.priceByOrder}</span>
                       </div>
                     }
                   />
@@ -171,12 +171,6 @@ export const OrderManagementComponent = ({
                 <Divider />
               </Fragment>
             ))}
-            <ListItem button>
-              <ListItemIcon>
-                <Remove />
-              </ListItemIcon>
-              <ListItemText primary="Drafts" />
-            </ListItem>
           </List>
         }
       />

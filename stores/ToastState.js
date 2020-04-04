@@ -11,6 +11,8 @@ import {
   TOAST_DEFAULT,
   TOAST_INFO
 } from '../enums/actions';
+import { SAVE_MODERATOR } from './ModeratorState';
+import { DELETE_CATEGORY, SAVE_CATEGORY } from './CategoryState';
 export const ENQUEUE_SNACKBAR = 'ENQUEUE_SNACKBAR';
 export const REMOVE_TOAST = 'REMOVE_TOAST';
 
@@ -35,7 +37,7 @@ const doToastWithType = ({ state = defaultState, message, type }) => {
     ]
   };
 };
-export const removeToast = key => ({
+export const removeToast = (key) => ({
   type: REMOVE_TOAST,
   key
 });
@@ -60,7 +62,7 @@ export default {
           msgNotify = 'Remove item from card success';
           break;
         case SAVE_BOOK:
-          msgNotify = 'Save book success';
+          msgNotify = 'Create new book success';
           break;
         case DELETE_BOOK:
           msgNotify = 'Delete success';
@@ -68,6 +70,15 @@ export default {
         case SAVE_ORDERS:
           msgNotify =
             'Your order is successful! Please check email to see your order code!';
+          break;
+        case SAVE_MODERATOR:
+          msgNotify = 'Create new Moderator success';
+          break;
+        case DELETE_CATEGORY:
+          msgNotify = 'Delete Category success';
+          break;
+        case SAVE_CATEGORY:
+          msgNotify = 'Create new Category success';
           break;
         default:
           break;
@@ -95,13 +106,22 @@ export default {
           msgNotify = 'Remove item from card fail';
           break;
         case SAVE_BOOK:
-          msgNotify = 'Save book fail';
+          msgNotify = 'Create new book fail';
           break;
         case DELETE_BOOK:
           msgNotify = 'Delete fail';
           break;
         case SAVE_ORDERS:
           msgNotify = 'Your order is fail';
+          break;
+        case SAVE_MODERATOR:
+          msgNotify = 'Create new Moderator fail';
+          break;
+        case DELETE_CATEGORY:
+          msgNotify = 'Delete Category fail';
+          break;
+        case SAVE_CATEGORY:
+          msgNotify = 'Create new Category fail';
           break;
         default:
           break;
@@ -153,7 +173,7 @@ export default {
           return {
             ...state,
             notifications: state.notifications.filter(
-              notification => notification.key !== key
+              (notification) => notification.key !== key
             )
           };
         default:

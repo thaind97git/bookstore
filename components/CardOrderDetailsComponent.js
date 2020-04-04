@@ -15,8 +15,9 @@ import moment from 'moment';
 import MaterialTable from 'material-table';
 import Link from 'next/link';
 import { formatDisplayNumber } from '../utils';
+import OrderStatusComponent from './OrderStatusComponent';
 
-const RenderTextField = props => {
+const RenderTextField = (props) => {
   return (
     <TextField
       {...props}
@@ -29,35 +30,6 @@ const RenderTextField = props => {
       }}
     />
   );
-};
-
-const getButtonStyleByStatus = status => {
-  switch (status) {
-    case 1:
-      return (
-        <Button variant="contained" color="secondary">
-          Waiting
-        </Button>
-      );
-    case 2:
-      return (
-        <Button variant="contained" color="primary">
-          Processed
-        </Button>
-      );
-    case 3:
-      return (
-        <Button
-          variant="contained"
-          style={{ background: '#4caf50', color: 'white' }}
-        >
-          Completed
-        </Button>
-      );
-
-    default:
-      break;
-  }
 };
 
 const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
@@ -133,14 +105,14 @@ const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
               />
             </Grid>
             <Grid item xs={12}>
-              Status: {getButtonStyleByStatus(orderDetails.status)}
+              Status: <OrderStatusComponent status={orderDetails.status} />
             </Grid>
             <Grid item xs={12}>
               <Card elevation={0}>
                 <CardContent style={{ padding: 0 }}>
                   <MaterialTable
                     components={{
-                      Container: props => <Paper {...props} elevation={0} />
+                      Container: (props) => <Paper {...props} elevation={0} />
                     }}
                     isLoading={false}
                     title="Order's Items"
@@ -149,7 +121,7 @@ const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
                       {
                         title: 'Book',
                         field: 'isbn',
-                        render: row => (
+                        render: (row) => (
                           <Link href={`/book-details?isbn=${row.isbn}`}>
                             <a target="__blank">{row.isbn}</a>
                           </Link>
@@ -165,7 +137,7 @@ const CardOrderDetailsComponent = ({ orderDetails = {} }) => {
                         title: 'Total Price',
                         field: '',
                         type: 'currency',
-                        render: row =>
+                        render: (row) =>
                           `$ ${Number(row.quantity) * Number(row.priceByOrder)}`
                       }
                     ]}

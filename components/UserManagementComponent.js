@@ -19,10 +19,10 @@ const connectToRedux = connect(
     userData: GetAllUserAPI.dataSelector,
     deleteUserData: DeleteUserAPI.dataSelector
   }),
-  dispatch => ({
+  (dispatch) => ({
     getAllUser: ({ pageSize, pageIndex }) =>
       dispatch(getAllUser({ pageIndex, pageSize })),
-    deleteUser: id => dispatch(deleteUser(id))
+    deleteUser: (id) => dispatch(deleteUser(id))
   })
 );
 
@@ -49,7 +49,7 @@ const HEADERS = [
   }
 ];
 const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
-  data.map(item => ({
+  data.map((item) => ({
     fullName: item.fullName,
     username: item.username,
     role: <RoleComponent type={item.role} />,
@@ -73,7 +73,8 @@ const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
 export const UserManagementComponent = ({
   getAllUser,
   userData,
-  deleteUserData
+  deleteUserData,
+  deleteUser
 }) => {
   const [isFetch, setIsFetch] = useState(true);
   const [pageSize, setPageSize] = useState(5);

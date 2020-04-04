@@ -22,7 +22,7 @@ export const GetBooksResettor = getResetter(GetBooksAPI);
 export const getBooks = ({ pageSize, pageIndex }) =>
   respondToSuccess(GetBooksAPI.actionCreator({ pageIndex, pageSize }));
 
-export const SaveBookAPI = makeFetchAction(SAVE_BOOK, formData => {
+export const SaveBookAPI = makeFetchAction(SAVE_BOOK, (formData) => {
   return nfetch({
     endpoint: '/book'
   })(formData, {
@@ -32,36 +32,36 @@ export const SaveBookAPI = makeFetchAction(SAVE_BOOK, formData => {
     }
   });
 });
-export const saveBook = formData =>
+export const saveBook = (formData) =>
   respondToSuccess(SaveBookAPI.actionCreator(formData), () => {
     Router.push('/admin/book');
   });
 
-export const DeleteBookAPI = makeFetchAction(DELETE_BOOK, id =>
+export const DeleteBookAPI = makeFetchAction(DELETE_BOOK, (isbn) =>
   nfetch({
     method: 'DELETE',
-    endpoint: `/book/${id}`
-  })
+    endpoint: `/book/${isbn}`
+  })()
 );
-export const deleteBook = id =>
-  respondToSuccess(DeleteBookAPI.actionCreator(id), (resp, header, store) => {
+export const deleteBook = (isbn) =>
+  respondToSuccess(DeleteBookAPI.actionCreator(isbn), (resp, header, store) => {
     store.dispatch(getBooks({ pageSize: 5, pageIndex: 1 }));
   });
 
-export const SearchBookAPI = makeFetchAction(SEARCH_BOOK, searchParam =>
+export const SearchBookAPI = makeFetchAction(SEARCH_BOOK, (searchParam) =>
   nfetch({
     method: 'GET',
     endpoint: `/book/search?query=${searchParam}`
   })()
 );
-export const searchBook = searchParam =>
+export const searchBook = (searchParam) =>
   respondToSuccess(SearchBookAPI.actionCreator(searchParam));
 
-export const GetBookDetailsAPI = makeFetchAction(GET_BOOK_DETAILS, id =>
+export const GetBookDetailsAPI = makeFetchAction(GET_BOOK_DETAILS, (isbn) =>
   nfetch({
     method: 'GET',
-    endpoint: `/book/${id}`
+    endpoint: `/book/${isbn}`
   })()
 );
-export const getBookDetails = id =>
-  respondToSuccess(GetBookDetailsAPI.actionCreator(id));
+export const getBookDetails = (isbn) =>
+  respondToSuccess(GetBookDetailsAPI.actionCreator(isbn));

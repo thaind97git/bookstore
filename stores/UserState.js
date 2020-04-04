@@ -5,6 +5,8 @@ import { respondToSuccess, respondToFailure } from './middlewares/api-reaction';
 import { createErrorSelector } from '../utils';
 import { saveToken, removeToken } from '../libs/token-libs';
 import nfetch from '../libs/nfetch';
+import { getAllModerator } from './ModeratorState';
+import { ADMIN, MODERATOR } from '../enums/userType';
 
 export const LOGIN_ADMIN = 'LOGIN_ADMIN';
 const GET_CURRENT_USER = 'GET_CURRENT_USER';
@@ -25,7 +27,7 @@ export const loginAdmin = ({ username, password }) => {
       username,
       password
     }),
-    resp => {
+    (resp) => {
       saveToken(resp);
       Router.push('/admin');
       return;
@@ -43,21 +45,21 @@ export const GetCurrentUserAPI = makeFetchAction(
   })
 );
 
-export const verifyLogin = user => {
-  if (!user) {
+export const verifyLogin = (user = {}) => {
+  if (!(user && [ADMIN, MODERATOR].includes(user.role))) {
     return false;
   }
   return true;
 };
 
 export const getCurrentUser = () => {
-  return respondToFailure(GetCurrentUserAPI.actionCreator(), resp => {
+  return respondToFailure(GetCurrentUserAPI.actionCreator(), (resp) => {
     if (resp.errors) {
       console.error('Err: ', resp.errors);
       return;
     }
 
-    if (!verifyLogin(resp.username)) {
+    if (!verifyLogin(resp)) {
       return Router.replace({
         pathname: '/admin/login'
       });
@@ -72,14 +74,21 @@ export const logOut = () => {
   Router.push('/admin/login');
 };
 
-export const DeleteUserAPI = makeFetchAction(DELETE_USER, id =>
+export const DeleteUserAPI = makeFetchAction(DELETE_USER, (id) =>
   nfetch({
-    endpoint: `/user/${id}/delete`,
-    method: 'GET'
+    endpoint: `/user/${id}`,
+    method: 'DELETE'
   })()
 );
-export const deleteUser = id =>
-  respondToSuccess(DeleteUserAPI.actionCreator(id));
+export const deleteUser = (id) =>
+  respondToSuccess(DeleteUserAPI.actionCreator(id), (resp, header, store) => {
+    store.dispatch(
+      getAllModerator({
+        pageSize: 5,
+        pageIndex: 1
+      })
+    );
+  });
 
 export const GetAllUserAPI = makeFetchAction(
   GET_ALL_USER,

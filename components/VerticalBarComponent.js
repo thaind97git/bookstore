@@ -1,11 +1,13 @@
 import {
   ChevronLeft,
   DesktopMac,
-  SignalCellularAlt,
   Group,
   Person,
   GraphicEq,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  BorderColor,
+  MenuBook,
+  Category
 } from '@material-ui/icons';
 import {
   Divider,
@@ -37,7 +39,7 @@ const drawerWidth = 240;
 
 const enhance = compose(withRouter, withWidth(), connectToRedux);
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     maxHeight: '100vh',
     position: 'relative',
@@ -99,7 +101,7 @@ const VerticalBarComponent = ({
   currentUserData
 }) => {
   const { role = MODERATOR } = currentUserData || {};
-  const handleDrawerResponsive = size => {
+  const handleDrawerResponsive = (size) => {
     if (!['md', 'lg', 'xl'].includes(size)) {
       setOpen(false);
     } else {
@@ -118,28 +120,28 @@ const VerticalBarComponent = ({
     },
     {
       label: 'Order',
-      icon: <SignalCellularAlt />,
+      icon: <BorderColor />,
       link: '/admin/order'
     },
     {
       label: 'User',
-      icon: <SignalCellularAlt />,
+      icon: <Group />,
       link: '/admin/user'
     },
     {
       label: 'Book',
-      icon: <Group />,
+      icon: <MenuBook />,
       link: '/admin/book'
     },
     {
       label: 'Category',
-      icon: <Group />,
+      icon: <Category />,
       link: '/admin/category'
     },
     {
-      label: 'Setting',
+      label: 'Profile',
       icon: <Person />,
-      link: '/admin/setting'
+      link: '/admin/profile'
     }
   ];
 

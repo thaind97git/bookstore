@@ -17,7 +17,7 @@ const connectWithRedux = connect(
   })
 );
 
-const styles = theme => ({
+const styles = (theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff'
@@ -28,7 +28,7 @@ const enhance = compose(connectWithRedux, withStyles(styles));
 
 export default function withAuth(AuthComponent) {
   class AuthenHOC extends React.Component {
-    static getInitialProps = async ctx => {
+    static getInitialProps = async (ctx) => {
       return AuthComponent.getInitialProps
         ? AuthComponent.getInitialProps(ctx)
         : {};

@@ -12,16 +12,17 @@ import {
   DeleteCategoryAPI,
   deleteCategory
 } from '../stores/CategoryState';
+import RLink from '../layouts/RLink';
 
 const connectToRedux = connect(
   createStructuredSelector({
     categoryData: GetCategoriesAPI.dataSelector,
     deleteCategoryData: DeleteCategoryAPI.dataSelector
   }),
-  dispatch => ({
+  (dispatch) => ({
     getCategories: ({ pageSize, pageIndex }) =>
       dispatch(getCategories({ pageIndex, pageSize })),
-    deleteCategory: id => dispatch(deleteCategory(id))
+    deleteCategory: (id) => dispatch(deleteCategory(id))
   })
 );
 
@@ -44,7 +45,7 @@ const HEADERS = [
   }
 ];
 const renderData = ({ data = [], setDialogDelete, setIdDeleted }) =>
-  data.map(item => ({
+  data.map((item) => ({
     name: item.name,
     description: item.description,
     status: <StatusComponent status={item.status} />,
@@ -109,7 +110,21 @@ export const BookManagementComponent = ({
         }}
       />
       <CardSimpleLayout
-        header="Book Management"
+        header={
+          <Grid container justify="space-between">
+            <span>Category Management</span>
+            <RLink href="/admin/category/add-new">
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                disableElevation
+              >
+                Add New Category
+              </Button>
+            </RLink>
+          </Grid>
+        }
         body={
           <TablePaginationComponent
             totalCount={totalElements}
